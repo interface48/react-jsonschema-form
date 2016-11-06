@@ -156,7 +156,6 @@ function formatJsonValidateResult(jsonValidateResult){
 export default function validateFormData(formData, schema, customValidate) {
   const {errors} = formatJsonValidateResult(jsonValidate(formData, schema));
   const errorSchema = toErrorSchema(errors);
-  console.log("Error schema ", errorSchema);
 
   if (typeof customValidate !== "function") {
     return {errors, errorSchema};
