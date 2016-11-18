@@ -75,12 +75,12 @@ class EPBCDateWidget extends Component {
 
   constructor(props) {
     super(props);
-    this.state = parseDateString(props.value, props.time);
+    this.state = parseDateString(props.value === "0000-01-01" ? "" : props.value, props.time);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.value !== undefined) {
-      this.setState(parseDateString(nextProps.value, nextProps.time));
+      this.setState(parseDateString(nextProps.value === "0000-01-01" ? "" : nextProps.value, nextProps.time));
     }
   }
 
@@ -126,7 +126,7 @@ class EPBCDateWidget extends Component {
          this.props.onChange(toDateString(this.state, this.props.time));
       } else {
         // Else, set the date to undefined
-        this.props.onChange(undefined);
+        this.props.onChange("0000-01-01");
       }
     });
   };
@@ -147,7 +147,7 @@ class EPBCDateWidget extends Component {
     if (disabled || readonly) {
       return;
     }
-    this.setState(parseDateString("", time), () => onChange(undefined));
+    this.setState(parseDateString("", time), () => onChange("0000-01-01"));
   };
 
   get dateElementProps() {
