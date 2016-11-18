@@ -90,7 +90,7 @@ export default class Form extends Component {
         const formDataPropertyName = keys[i];
         const formDataPropertyValue = formData[formDataPropertyName];
         const formDataPropertyRequired = requiredFields ? requiredFields.indexOf(formDataPropertyName) > -1 : false;
-        const formDataPropertyFormat = schema.properties[formDataPropertyName].format;
+        const formDataPropertyFormat = schema.properties[formDataPropertyName] ? schema.properties[formDataPropertyName].format : undefined;
         // If this property is an object, the recursively call removeEmptyRequiredFields...
         if (typeof formDataPropertyValue === "object") {
           this.removeEmptyRequiredFields(schema.properties[formDataPropertyName], formData[formDataPropertyName]);
