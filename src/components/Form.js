@@ -90,9 +90,16 @@ export default class Form extends Component {
         const formDataPropertyName = keys[i];
         const formDataPropertyValue = formData[formDataPropertyName];
         const formDataPropertyRequired = requiredFields ? requiredFields.indexOf(formDataPropertyName) > -1 : false;
+        const formDataPropertyFormat = schema.properties[formDataPropertyName].format;
         // If this property is an object, the recursively call removeEmptyRequiredFields...
         if (typeof formDataPropertyValue === "object") {
           this.removeEmptyRequiredFields(schema.properties[formDataPropertyName], formData[formDataPropertyName]);
+        }
+        // Otherwise, if this is a date or date-time value, and the current value is the
+        // empty "0000-01-01" value, then remove it, regardless of whether it's required or not...
+        else if (formDataPropertyFormat && (formDataPropertyFormat === "date" || formDataPropertyFormat === "date-time")
+          && (formData[formDataPropertyName] && formData[formDataPropertyName].substring(0, Math.min(formData[formDataPropertyName].length, 10)) === "0000-01-01")) {
+          delete formData[formDataPropertyName];
         }
         // Otherwise, if this is a required property...
         else if (formDataPropertyRequired) {
