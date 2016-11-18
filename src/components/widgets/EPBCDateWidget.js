@@ -90,6 +90,7 @@ class EPBCDateWidget extends Component {
 
   onChange = (property, value) => {
     value = parseInt(value);
+
     let newState;
 
     // If the year has changed, and month and day is set
