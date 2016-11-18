@@ -83,7 +83,7 @@ export default class Form extends Component {
         this.removeEmptyRequiredFields(schema.items, formData[i]);
       }
     }
-    else if (typeof formData === "object") {
+    else if (schema && typeof formData === "object") {
       const keys = Object.keys(formData);
       const requiredFields = schema.required;
       for (let i = 0; i < keys.length; i++) {

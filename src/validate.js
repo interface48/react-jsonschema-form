@@ -144,6 +144,11 @@ function formatJsonValidateResult(jsonValidateResult){
   const extValidationErrors = [];
 
   const evaluateExtendedValidations = (schema, formData, formDataPath) => {
+    // If form data exists here but the schema does not, then we have conditionally
+    // removed part of the schema due to dependencies, so ext validation do not apply...
+    if (!schema) {
+      return;
+    }
     if (Array.isArray(formData)) {
       for (let i = 0; i < formData.length; i++) {
         evaluateExtendedValidations(schema.items, formData[i] + "[" + i + "]");
