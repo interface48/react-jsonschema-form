@@ -62,9 +62,9 @@ export default class Form extends Component {
     return shouldRender(this, nextProps, nextState);
   }
 
-  validate(formData, schema) {
+  validate(formData, schema, isSubmit) {
     const {validate} = this.props;
-    return validateFormData(formData, schema || this.props.schema, validate);
+    return validateFormData(formData, schema || this.props.schema, validate, !!isSubmit);
   }
 
   renderErrors() {
@@ -142,7 +142,7 @@ export default class Form extends Component {
       let formData = Object.assign({}, this.state.formData);
       this.removeEmptyRequiredFields(this.props.schema, formData);
       setState(this, {formData}, () => {
-        const {errors, errorSchema} = this.validate(this.state.formData);
+        const {errors, errorSchema} = this.validate(this.state.formData, false, true);
         if (Object.keys(errors).length > 0) {
           setState(this, {errors, errorSchema}, () => {
             if (this.props.onError) {
