@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from "react";
 
 import {shouldRender, parseDateString, toDateString, pad} from "../../utils";
-import SelectWidget from "../widgets/SelectWidget";
+import SelectWidget from "../widgets/EPBCSelectWidget";
 
 
 function rangeOptions(type, start, stop) {
