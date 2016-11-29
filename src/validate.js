@@ -283,7 +283,7 @@ function formatJsonValidateResult(jsonValidateResult){
  * function, which receives the form data and an `errorHandler` object that
  * will be used to add custom validation errors for each field.
  */
-export default function validateFormData(formData, schema, customValidate) {
+export default function validateFormData(formData, schema, customValidate, isSubmit) {
   const {errors} = formatJsonValidateResult(jsonValidate(formData, schema));
   const errorSchema = toErrorSchema(errors);
 
@@ -291,7 +291,7 @@ export default function validateFormData(formData, schema, customValidate) {
     return {errors, errorSchema};
   }
 
-  const errorHandler = customValidate(formData, createErrorHandler(formData));
+  const errorHandler = customValidate(formData, createErrorHandler(formData), isSubmit);
   const userErrorSchema = unwrapErrorHandler(errorHandler);
   const newErrorSchema = mergeObjects(errorSchema, userErrorSchema, true);
   // XXX: The errors list produced is not fully compliant with the format
