@@ -75,12 +75,15 @@ class EPBCDateWidget extends Component {
 
   constructor(props) {
     super(props);
+    // If the "null" (0000-01-01) date set to empty string so that parseDateString will set the date
+    // to an unset date state of { year: -1, month: -1, day: -1 }
     this.state = parseDateString(props.value === "0000-01-01" ? "" : props.value, props.time);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.value !== undefined) {
-      this.setState(parseDateString(nextProps.value === "0000-01-01" ? "" : nextProps.value, nextProps.time));
+    // Only change the date if it is not a "null" (0000-01-01) or undefined date
+    if (nextProps.value !== "0000-01-01" && nextProps.value !== undefined) {
+      this.setState(parseDateString(nextProps.value, nextProps.time));
     }
   }
 
