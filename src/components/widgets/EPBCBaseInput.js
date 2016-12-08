@@ -53,6 +53,7 @@ class BaseInput extends Component {
         options,  // eslint-disable-line
         schema,   // eslint-disable-line
         formContext,  // eslint-disable-line
+        registry,  // eslint-disable-line
         ...inputProps
     } = this.props;
     const maxLength = schema.maxLength ? schema.maxLength : null;

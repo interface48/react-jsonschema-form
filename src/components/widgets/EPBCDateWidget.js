@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from "react";
 
 import {shouldRender, parseDateString, toDateString, pad} from "../../utils";
-import SelectWidget from "../widgets/SelectWidget";
 
 const ASCENDING = "asc"
 const DESCENDING = "desc"
@@ -38,9 +37,9 @@ function readyForChange(state) {
 }
 
 function DateElement(props) {
-  const {type, range, value, select, rootId, disabled, readonly, autofocus, widgetOptions} = props;
+  const {type, range, value, select, rootId, disabled, readonly, autofocus, registry, widgetOptions} = props;
   const id = rootId + "_" + type;
-
+  const {SelectWidget} = registry.widgets;
   return (
     <SelectWidget
       schema={{type: "integer"}}
@@ -177,7 +176,7 @@ class EPBCDateWidget extends Component {
   }
 
   render() {
-    const {id, disabled, readonly, autofocus, options} = this.props;
+    const {id, disabled, readonly, autofocus, registry, options} = this.props;
     return (
       <ul className="list-inline">{
         this.dateElementProps.map((elemProps, i) => (
@@ -188,6 +187,7 @@ class EPBCDateWidget extends Component {
               {...elemProps}
               disabled= {disabled}
               readonly={readonly}
+              registry={registry}
               autofocus={autofocus && i === 0}
               widgetOptions={options}/>
           </li>
