@@ -8,7 +8,7 @@ import {
 } from "../../utils";
 import UnsupportedField from "./UnsupportedField";
 
-const REQUIRED_FIELD_SYMBOL = "*";
+const OPTIONAL_FIELD_SYMBOL = " (Optional)";
 const COMPONENT_TYPES = {
   array:   "ArrayField",
   boolean: "BooleanField",
@@ -38,7 +38,7 @@ function Label(props) {
   }
   return (
     <label className="control-label" htmlFor={id}>
-      {required ? label + REQUIRED_FIELD_SYMBOL : label}
+      {required ? label : label + OPTIONAL_FIELD_SYMBOL}
     </label>
   );
 }
@@ -50,7 +50,7 @@ function Help(props) {
     return <div/>;
   }
   if (typeof help === "string") {
-    return <p className="help-block">{help}</p>;
+    return <div className="help-block" dangerouslySetInnerHTML={{__html: help}}></div>;
   }
   return <div className="help-block">{help}</div>;
 }
@@ -60,12 +60,17 @@ function ErrorList(props) {
   if (errors.length === 0) {
     return <div/>;
   }
+  else if (errors.length === 1) {
+    return (
+      <div className="text-danger" dangerouslySetInnerHTML={{__html: errors[0]}}></div>
+    );
+  }
   return (
-    <div>
-      <p/>
+    <div className="text-danger">
+      The following errors exist:
       <ul className="error-detail bs-callout bs-callout-info">{
         errors.map((error, index) => {
-          return <li className="text-danger" key={index}>{error}</li>;
+          return <li className="text-danger" key={index} dangerouslySetInnerHTML={{__html: error}}></li>;
         })
       }</ul>
     </div>

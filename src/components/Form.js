@@ -59,9 +59,9 @@ export default class Form extends Component {
     return shouldRender(this, nextProps, nextState);
   }
 
-  validate(formData, schema) {
+  validate(formData, schema, isSubmit) {
     const {validate} = this.props;
-    return validateFormData(formData, schema || this.props.schema, validate);
+    return validateFormData(formData, schema || this.props.schema, validate, !!isSubmit);
   }
 
   renderErrors() {
@@ -72,6 +72,49 @@ export default class Form extends Component {
       return <ErrorList errors={errors}/>;
     }
     return null;
+  }
+
+  removeEmptyRequiredFields(schema, formData) {
+    if (Array.isArray(formData)) {
+      for (let i = 0; i < formData.length; i++) {
+        this.removeEmptyRequiredFields(schema.items, formData[i]);
+      }
+    }
+    else if (schema && typeof formData === "object") {
+      const keys = Object.keys(formData);
+      const requiredFields = schema.required;
+      for (let i = 0; i < keys.length; i++) {
+        const formDataPropertyName = keys[i];
+        const formDataPropertyValue = formData[formDataPropertyName];
+        const formDataPropertyRequired = requiredFields ? requiredFields.indexOf(formDataPropertyName) > -1 : false;
+        const formDataPropertyFormat = schema.properties[formDataPropertyName] ? schema.properties[formDataPropertyName].format : undefined;
+        // If this property is an object, the recursively call removeEmptyRequiredFields...
+        if (typeof formDataPropertyValue === "object") {
+          this.removeEmptyRequiredFields(schema.properties[formDataPropertyName], formData[formDataPropertyName]);
+        }
+        // Otherwise, if this is a date or date-time value, and the current value is the
+        // empty "0000-01-01" value, then remove it, regardless of whether it's required or not...
+        else if (formDataPropertyFormat && (formDataPropertyFormat === "date" || formDataPropertyFormat === "date-time")
+          && (formData[formDataPropertyName] && formData[formDataPropertyName].substring(0, Math.min(formData[formDataPropertyName].length, 10)) === "0000-01-01")) {
+          delete formData[formDataPropertyName];
+        }
+        // Otherwise, if this is a required property...
+        else if (formDataPropertyRequired) {
+          // If this property is an empty string, then remove it...
+          if (typeof formDataPropertyValue === "string" && formDataPropertyValue.trim().length === 0) {
+            delete formData[formDataPropertyName];
+          }
+          // Otherwise if this property is a zero value, then remove it...
+          else if (typeof formDataPropertyValue === "number" && formDataPropertyValue === 0) {
+            delete formData[formDataPropertyName];
+          }
+          // Otherwise if this property is undefined, then remove it...
+          else if (formDataPropertyValue === undefined) {
+            delete formData[formDataPropertyName];
+          }
+        }
+      }
+    }
   }
 
   onChange = (formData, options={validate: false}) => {
@@ -91,26 +134,36 @@ export default class Form extends Component {
   onSubmit = (event) => {
     event.preventDefault();
     this.setState({status: "submitted"});
-
+    let stateErrorsExist = false;
     if (!this.props.noValidate) {
-      const {errors, errorSchema} = this.validate(this.state.formData);
-      if (Object.keys(errors).length > 0) {
-        setState(this, {errors, errorSchema}, () => {
-          if (this.props.onError) {
-            this.props.onError(errors);
-          } else {
-            console.error("Form validation failed", errors);
-          }
-        });
-        return;
-      }
+      let formData = Object.assign({}, this.state.formData);
+      this.removeEmptyRequiredFields(this.props.schema, formData);
+      setState(this, {formData}, () => {
+        const {errors, errorSchema} = this.validate(this.state.formData, false, true);
+        if (Object.keys(errors).length > 0) {
+          setState(this, {errors, errorSchema}, () => {
+            if (this.props.onError) {
+              this.props.onError(errors);
+            } else {
+              console.error("Form validation failed", errors);
+            }
+          });
+          return;
+        }
+        this.onInnerSubmit(event);        
+      });      
     }
+    else {
+      this.onInnerSubmit(event);
+    }
+  };
 
+  onInnerSubmit = (event) => {
     if (this.props.onSubmit) {
       this.props.onSubmit(this.state);
     }
     this.setState({status: "initial", errors: [], errorSchema: {}});
-  };
+  }
 
   getRegistry() {
     // For BC, accept passed SchemaField and TitleField props and pass them to

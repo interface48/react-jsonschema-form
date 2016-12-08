@@ -8,7 +8,6 @@ import {
   getDefaultRegistry
 } from "../../utils";
 
-
 function StringField(props) {
   const {
     schema,
