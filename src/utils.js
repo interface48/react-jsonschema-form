@@ -20,7 +20,7 @@ const widgetMap = {
     "data-url": "FileWidget",
     radio: "RadioWidget",
     select: "SelectWidget",
-    textarea: "EPBCTextareaWidget",
+    textarea: "TextareaWidget",
     hidden: "HiddenWidget",
     date: "DateWidget",
     datetime: "DateTimeWidget",
