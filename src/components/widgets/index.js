@@ -12,7 +12,7 @@ import HiddenWidget from "./HiddenWidget";
 import PasswordWidget from "./PasswordWidget";
 import RadioWidget from "./RadioWidget";
 import RangeWidget from "./RangeWidget";
-import SelectWidget from "./SelectWidget";
+import SelectWidget from "./EPBCSelectWidget";
 import TextareaWidget from "./EPBCTextareaWidget";
 import TextWidget from "./TextWidget";
 import URLWidget from "./URLWidget";

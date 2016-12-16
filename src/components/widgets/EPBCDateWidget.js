@@ -37,7 +37,7 @@ function readyForChange(state) {
 }
 
 function DateElement(props) {
-  const {type, range, value, select, rootId, disabled, readonly, autofocus, registry, widgetOptions} = props;
+  const {type, range, value, select, onBlur, rootId, disabled, readonly, autofocus, widgetOptions} = props;
   const id = rootId + "_" + type;
   const {SelectWidget} = registry.widgets;
   return (
@@ -50,6 +50,7 @@ function DateElement(props) {
       disabled={disabled}
       readonly={readonly}
       autofocus={autofocus}
+      onBlur={(value) => onBlur(type, value)}
       onChange={(value) => select(type, value)}/>
   );
 }
@@ -89,6 +90,15 @@ class EPBCDateWidget extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return shouldRender(this, nextProps, nextState);
   }
+
+  onBlur = (property, value) => {
+    value = parseInt(value);
+
+    // If the year has changed, and month and day is set
+    if (property === "day" && (value === -1 || this.state.month === -1 || this.state.day === -1)){
+      this.props.onChange(undefined);
+    }
+  };
 
   onChange = (property, value) => {
     value = parseInt(value);
@@ -183,6 +193,7 @@ class EPBCDateWidget extends Component {
           <li key={i}>
             <DateElement
               rootId={id}
+              onBlur={this.onBlur}
               select={this.onChange}
               {...elemProps}
               disabled= {disabled}
