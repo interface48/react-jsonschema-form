@@ -37,7 +37,7 @@ function readyForChange(state) {
 }
 
 function DateElement(props) {
-  const {type, range, value, select, onBlur, rootId, disabled, readonly, autofocus, widgetOptions} = props;
+  const {type, range, value, select, onBlur, rootId, disabled, readonly, autofocus, registry, widgetOptions} = props;
   const id = rootId + "_" + type;
   const {SelectWidget} = registry.widgets;
   return (
