@@ -7,7 +7,7 @@ import {
   getDefaultRegistry
 } from "../../utils";
 import TextWidget from "../widgets/TextWidget";
-import SelectWidget from "../widgets/SelectWidget";
+import SelectWidget from "../widgets/EPBCSelectWidget";
 
 function StringField(props) {
   const {

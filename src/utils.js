@@ -6,7 +6,7 @@ import PasswordWidget from "./components/widgets/PasswordWidget";
 import RadioWidget from "./components/widgets/RadioWidget";
 import UpDownWidget from "./components/widgets/UpDownWidget";
 import RangeWidget from "./components/widgets/RangeWidget";
-import SelectWidget from "./components/widgets/SelectWidget";
+import SelectWidget from "./components/widgets/EPBCSelectWidget";
 import TextWidget from "./components/widgets/TextWidget";
 import DateWidget from "./components/widgets/DateWidget";
 import DateTimeWidget from "./components/widgets/DateTimeWidget";
