@@ -136,7 +136,7 @@ function formatJsonValidateResult(jsonValidateResult){
         evaluateExtendedValidations(schema.items, formData[i] + "[" + i + "]");
       }
     }
-    else if (typeof formData === "object") {
+    else if (formData && typeof formData === "object") {
       const keys = Object.keys(formData);
       const extValidations = schema["ext:validations"];      
       if (extValidations) {
@@ -202,38 +202,60 @@ function formatJsonValidateResult(jsonValidateResult){
     evaluateExtendedValidations(schema, formData, "instance");
   }
 
-  const newErrors = errors.filter((error) => {
-    // If this is a minimum length validation error, and the field is required,
-    // then ignore it if it is currently undefined or an empty string...
-    if (error.name === "minLength") {
-      const propPath = errorPropertyToPath(error.property);
-      // The prop name is at the end of the path
-      const propName = propPath.pop();
-      // Note that we're getting the path to the parent schema by popping the 
-      // property off the end of the path
-      const propParentPath = propPath;
-      // If the path starts with instance, then remove it, since we're beginning
-      // from the root schema... 
-      if (propParentPath[0] === "instance") {
-        propParentPath.shift();
+  const getPropNameAndParentSchema = (error) => {
+    const propPath = toPath(error.property);
+    // The prop name is at the end of the path
+    const propName = propPath.pop();
+    // Note that we're getting the path to the parent schema by popping the 
+    // property off the end of the path
+    const propParentPath = propPath;
+    // If the path starts with instance, then remove it, since we're beginning
+    // from the root schema... 
+    if (propParentPath[0] === "instance") {
+      propParentPath.shift();
+    }
+    const propParentSchema = propParentPath.reduce((parent, prop) => {
+      if (typeof prop === "number") {
+        return parent.items;
       }
-      const propParentSchema = propParentPath.reduce((parent, prop) => {
-        if (typeof prop === "number") {
-          return parent.items;
-        }
-        return parent.properties[prop];
-      }, schema);
-      if (propParentSchema.required && propParentSchema.required.indexOf(propName) > -1
-        && (!error.instance || error.instance.length === 0)) {
+      return parent.properties[prop];
+    }, schema);
+    return { propName, propParentSchema };
+  };
+
+  const newErrors = errors.filter((error) => {
+    // If this is a minLength, enum or type validation error and the value is null,
+    // suppress the error since it will be conveyed as a required field error
+    // instead...
+    if (["minLength", "enum"].indexOf(error.name) > -1 && !error["instance"]) {
+      const { propName, propParentSchema } = getPropNameAndParentSchema(error);
+      if (propParentSchema.required && propParentSchema.required.indexOf(propName) > -1) {
+        return false;
+      }
+    }
+    // Otherwise, if this is a type validation error and the value is null,
+    // suppress the error if it is for an optional field...
+    else if(error.name === "type" && !error["instance"]) {
+      const { propName, propParentSchema } = getPropNameAndParentSchema(error);
+      if (!(propParentSchema.required && propParentSchema.required.indexOf(propName) > -1)) {
         return false;
       }
     }
     return true;
   }).map((error) => {
-    // If this is a required property error for an object, then
+    // If this is a type error for a required field with value set to null, 
+    // then re-frame it as a 'Field is required' error
+    if(error.name === "type"){
+      const { propName, propParentSchema } = getPropNameAndParentSchema(error);
+      if (propParentSchema.required && propParentSchema.required.indexOf(propName) > -1) {
+        error.name = "required";
+        error.message = error.schema.title + " is required";
+      }
+    }
+    // Otherwise, if this is a required property error for an object, then
     // re-frame the validation error as a 'Field is required' 
     // error for the specified property...
-    if (error.name === "required") {
+    else if (error.name === "required") {
       error.property += "." + error.argument;
       error.message = error.schema.properties[error.argument].title + " is required";
       error.schema = error.schema.properties[error.argument];

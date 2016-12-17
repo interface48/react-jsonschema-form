@@ -15,29 +15,33 @@ class BaseInput extends Component {
     this.state = { value: value };
   }
 
+  getSanitizedInputValue(value, type) {
+    if (type === "number" || type === "integer") {
+      const numericRegex = /\d+/;
+      const numericValue = numericRegex.exec(value);
+      value = numericValue ? numericValue[0] : null;
+    }
+    else if (typeof value === "string" && value.length === 0){
+      value = null;
+    }
+    return value;
+  }
+
   onChange() {
-    const {onChange} = this.props;
+    const {onChange, type} = this.props;
     return (event) => {
-        const value = event.target.value.length === 0 && this.props.required  ? undefined : event.target.value;
-        this.setState({ value: value }, () => { 
-            onChange(value)
-        });
+      const value = this.getSanitizedInputValue(event.target.value);      
+      this.setState({ value: value });
     };
   }
 
   onBlur() {
-    const {onChange} = this.props;
+    const {onChange, type} = this.props;
     return (event) => {
-        const rawValue = event.target.value;
-        const trimmedValue = event.target.value.trim();
-        const value = trimmedValue.length === 0 && this.props.required ? undefined : trimmedValue;
-        // If whitespace was leading or trailing the input value, then
-        // re-set the value with the trimmed value...
-        if (rawValue !== value) {            
-            this.setState({ value: value }, () => { 
-                onChange(value)
-            });
-        }
+      const value = this.getSanitizedInputValue(event.target.value); 
+        this.setState({ value: value }, () => { 
+            onChange(value);
+        });
     };
   }
 
@@ -45,7 +49,6 @@ class BaseInput extends Component {
     // Note: since React 15.2.0 we can't forward unknown element attributes, so we
     // exclude the "options" and "schema" ones here.
     const {
-        value,
         required,
         readonly,
         autofocus,
@@ -56,6 +59,9 @@ class BaseInput extends Component {
         registry,  // eslint-disable-line
         ...inputProps
     } = this.props;
+    const {
+      value
+    } = this.state;
     const maxLength = schema.maxLength ? schema.maxLength : null;
     return (
       <input
@@ -64,7 +70,7 @@ class BaseInput extends Component {
         readOnly={readonly}
         autoFocus={autofocus}
         maxLength={maxLength}
-        value={typeof value === "undefined" ? "" : value}
+        value={value ? value : ""}
         onChange={this.onChange()}
         onBlur={this.onBlur()}/>
     );

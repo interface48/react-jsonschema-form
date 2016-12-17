@@ -96,17 +96,17 @@ export default class Form extends Component {
         // empty "0000-01-01" value, then remove it, regardless of whether it's required or not...
         else if (formDataPropertyFormat && (formDataPropertyFormat === "date" || formDataPropertyFormat === "date-time")
           && (formData[formDataPropertyName] && formData[formDataPropertyName].substring(0, Math.min(formData[formDataPropertyName].length, 10)) === "0000-01-01")) {
-          delete formData[formDataPropertyName];
+          formData[formDataPropertyName] = null;
         }
         // Otherwise, if this is a required property...
         else if (formDataPropertyRequired) {
           // If this property is an empty string, then remove it...
           if (typeof formDataPropertyValue === "string" && formDataPropertyValue.trim().length === 0) {
-            delete formData[formDataPropertyName];
+            formData[formDataPropertyName] = null;
           }
           // Otherwise if this property is a zero value, then remove it...
           else if (typeof formDataPropertyValue === "number" && formDataPropertyValue === 0) {
-            delete formData[formDataPropertyName];
+            formData[formDataPropertyName] = null;
           }
           // Otherwise if this property is undefined, then remove it...
           else if (formDataPropertyValue === undefined) {
