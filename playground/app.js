@@ -38,7 +38,15 @@ Codemirror.prototype.componentWillReceiveProps = function (nextProps) {
 const log = (type) => console.log.bind(console, type);
 const fromJson = (json) => JSON.parse(json);
 const toJson = (val) => JSON.stringify(val, null, 2);
-const liveValidateSchema = {type: "boolean", title: "Live validation"};
+const liveValidateSchema = {
+  "jsonSchema": {
+    "type": "boolean", 
+    "title": "Live validation"
+  },
+  "uiSchema": {
+    "ui:widget": "checkbox"
+  }
+};
 const cmOptions = {
   theme: "default",
   height: "auto",
@@ -326,7 +334,8 @@ class App extends Component {
               <Selector onSelected={this.load} />
             </div>
             <div className="col-sm-2">
-              <Form schema={liveValidateSchema}
+              <Form schema={liveValidateSchema.jsonSchema}
+                    uiSchema={liveValidateSchema.uiSchema}
                     formData={liveValidate}
                     onChange={this.setLiveValidate}><div/></Form>
             </div>
