@@ -24,11 +24,11 @@ function BooleanField(props) {
   } = props;
   const {title} = schema;
   const {widgets, formContext} = registry;
-  const {widget="checkbox", ...options} = getUiOptions(uiSchema);
+  const {widget="radio", ...options} = getUiOptions(uiSchema);
   const Widget = getWidget(schema, widget, widgets);
   const enumOptions = optionsList({
-    enum: [true, false],
-    enumNames: schema.enumNames || ["yes", "no"]
+    enum: [true, false, null],
+    enumNames: schema.enumNames || ["Yes", "No", "(Not Specified)"]
   });
   return <Widget
     options={{...options, enumOptions}}

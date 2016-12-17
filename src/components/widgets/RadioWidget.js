@@ -25,7 +25,7 @@ function RadioWidget({
             <input type="radio"
               checked={checked}
               name={name}
-              value={option.value}
+              value={option.value === null ? option.value : undefined}
               disabled={disabled}
               autoFocus={autofocus && i === 0}
               onChange={_ => onChange(option.value)}/>
