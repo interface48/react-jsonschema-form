@@ -136,7 +136,7 @@ function formatJsonValidateResult(jsonValidateResult){
         evaluateExtendedValidations(schema.items, formData[i] + "[" + i + "]");
       }
     }
-    else if (typeof formData === "object") {
+    else if (formData && typeof formData === "object") {
       const keys = Object.keys(formData);
       const extValidations = schema["ext:validations"];      
       if (extValidations) {

@@ -30,6 +30,10 @@ module.exports = {
           "alt-date": {
             type: "string",
             format: "date"
+          },
+          "epbc-date": {
+            type: "string",
+            format: "date"
           }
         }
       }
@@ -42,6 +46,18 @@ module.exports = {
       },
       "alt-date": {
         "ui:widget": "alt-date"
+      },
+      "epbc-date": {
+        "ui:widget": "epbc-date",
+        "ui:options": {
+          "yearRange": [
+            1900,
+            2000
+          ],
+          "enableNow": false,
+          "enableClear": true,
+          "orderYearBy": "DESC"
+        }
       }
     }
   },

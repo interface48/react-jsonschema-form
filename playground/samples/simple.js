@@ -25,6 +25,16 @@ module.exports = {
         type: "string",
         title: "Password",
         minLength: 3
+      },
+      "booleanRadio": {
+        "type": "boolean",
+        "title": "Boolean Radio Group (default)",
+        "default": null
+      },
+      "booleanCheckbox": {
+        "type": "boolean",
+        "title": "Boolean Checkbox",
+        "default": false
       }
     }
   },
@@ -41,6 +51,14 @@ module.exports = {
     password: {
       "ui:widget": "password",
       "ui:help": "Hint: Make it strong!"
+    },
+    booleanRadio: {
+      "ui:options": {
+        inline: true
+      }
+    },
+    booleanCheckbox: {
+      "ui:widget": "checkbox"
     },
     date: {
       "ui:widget": "alt-datetime"
