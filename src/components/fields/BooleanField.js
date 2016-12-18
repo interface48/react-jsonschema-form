@@ -1,4 +1,4 @@
-import React, {PropTypes} from "react";
+import React, { PropTypes } from "react";
 
 import {
   defaultFieldValue,
@@ -24,17 +24,39 @@ function BooleanField(props) {
   } = props;
   const {title} = schema;
   const {widgets, formContext} = registry;
-  const {widget="radio", ...options} = getUiOptions(uiSchema);
+  const {widget = "radio", ...options} = getUiOptions(uiSchema);
   const Widget = getWidget(schema, widget, widgets);
-  const enumOptions = optionsList({
-    enum: [true, false, null],
-    enumNames: schema.enumNames || ["Yes", "No", "(Not Specified)"]
-  });
+  let enumOptions;
+
+  // Otherwise, if the widget to be used is a radio button group, null is an option, so
+  // include it as the right-most (or bottom-most) option...
+  if (widget === "radio") {
+    enumOptions = optionsList({
+      enum: [true, false, ""],
+      enumNames: schema.enumNames || ["Yes", "No", "(Not Specified)"]
+    });
+  }
+  // Otherwise, if the widget to be used is a select input, null is an option, so include
+  // it as the first option...
+  else if (widget === "select") {
+    enumOptions = optionsList({
+      enum: ["", true, false],
+      enumNames: schema.enumNames || ["Select...", "Yes", "No",]
+    });
+  }
+  // Otherwise, if the widget to be used is a checkbox or some other field, the value can 
+  // assume the value can only be true or false, and null (i.e. not specified) is not an option...
+  else {
+    enumOptions = optionsList({
+      enum: [true, false],
+      enumNames: schema.enumNames || ["Yes", "No"]
+    });
+  }
   return <Widget
-    options={{...options, enumOptions}}
+    options={{ ...options, enumOptions }}
     schema={schema}
     id={idSchema && idSchema.$id}
-    onChange={onChange}
+    onChange={(value) => onChange((typeof value !== "boolean") ? null : value)}
     label={title === undefined ? name : title}
     value={defaultFieldValue(formData, schema)}
     required={required}
@@ -42,7 +64,7 @@ function BooleanField(props) {
     readonly={readonly}
     registry={registry}
     formContext={formContext}
-    autofocus={autofocus}/>;
+    autofocus={autofocus} />;
 }
 
 if (process.env.NODE_ENV !== "production") {
@@ -51,7 +73,7 @@ if (process.env.NODE_ENV !== "production") {
     uiSchema: PropTypes.object,
     idSchema: PropTypes.object,
     onChange: PropTypes.func.isRequired,
-    formData: PropTypes.bool,
+    formData: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
     required: PropTypes.bool,
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,

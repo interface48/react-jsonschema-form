@@ -28,14 +28,14 @@ function StringField(props) {
   const defaultWidget = format || (enumOptions ? "select" : "text");
   const {widget=defaultWidget, placeholder="", ...options} = getUiOptions(uiSchema);
   const Widget = getWidget(schema, widget, widgets);
-
+  
   return <Widget
     options={{...options, enumOptions}}
     schema={schema}
     id={idSchema && idSchema.$id}
     label={title === undefined ? name : title}
     value={defaultFieldValue(formData, schema)}
-    onChange={onChange}
+    onChange={(value) => onChange(value ? value : null)}
     required={required}
     disabled={disabled}
     readonly={readonly}

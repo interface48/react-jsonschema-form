@@ -15,22 +15,10 @@ class BaseInput extends Component {
     this.state = { value: value };
   }
 
-  getSanitizedInputValue(value, type) {
-    if (type === "number" || type === "integer") {
-      const numericRegex = /\d+/;
-      const numericValue = numericRegex.exec(value);
-      value = numericValue ? numericValue[0] : null;
-    }
-    else if (typeof value === "string" && value.length === 0){
-      value = null;
-    }
-    return value;
-  }
-
   onChange() {
     const {onChange, type} = this.props;
     return (event) => {
-      const value = this.getSanitizedInputValue(event.target.value);      
+      const value = event.target.value;      
       this.setState({ value: value });
     };
   }
@@ -38,7 +26,7 @@ class BaseInput extends Component {
   onBlur() {
     const {onChange, type} = this.props;
     return (event) => {
-      const value = this.getSanitizedInputValue(event.target.value); 
+      const value = event.target.value; 
         this.setState({ value: value }, () => { 
             onChange(value);
         });
@@ -70,7 +58,7 @@ class BaseInput extends Component {
         readOnly={readonly}
         autoFocus={autofocus}
         maxLength={maxLength}
-        value={value ? value : ""}
+        value={value == null ? "" : value}
         onChange={this.onChange()}
         onBlur={this.onBlur()}/>
     );

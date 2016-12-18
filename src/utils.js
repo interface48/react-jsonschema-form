@@ -1,7 +1,6 @@
 import React from "react";
 import "setimmediate";
 
-
 const widgetMap = {
   boolean: {
     checkbox: "CheckboxWidget",
@@ -144,12 +143,15 @@ function computeDefaults(schema, parentDefaults, definitions={}) {
   return defaults;
 }
 
-export function getDefaultFormState(_schema, formData, definitions={}) {
+export function getDefaultFormState(_schema, formData, definitions={}, initialize) {
   if (!isObject(_schema)) {
     throw new Error("Invalid schema: " + _schema);
   }
   const schema = retrieveSchema(_schema, definitions);
   const defaults = computeDefaults(schema, _schema.default, definitions);
+  if (initialize) {
+    initializeFormData(schema, formData);
+  }
   if (typeof(formData) === "undefined") { // No form data? Use schema defaults.
     return defaults;
   }
@@ -157,6 +159,90 @@ export function getDefaultFormState(_schema, formData, definitions={}) {
     return mergeObjects(defaults, formData);
   }
   return formData || defaults;
+}
+
+function initializeFormData(schema, formData) {
+  if (Array.isArray(formData)) {
+    for (let i = 0; i < formData.length; i++) {
+      initializeFormData(schema.items, formData[i]);
+    }
+  }
+    else if (schema && formData && typeof formData === "object") {
+    const keys = Object.keys(formData);
+    const requiredFields = schema.required;
+    for (let i = 0; i < keys.length; i++) {
+      const formDataPropertyName = keys[i];
+      const formDataPropertyValue = formData[formDataPropertyName];
+      const formDataPropertyRequired = requiredFields ? requiredFields.indexOf(formDataPropertyName) > -1 : false;
+      const formDataPropertyType = schema.properties[formDataPropertyName] ? schema.properties[formDataPropertyName].type : undefined;
+      const formDataPropertyFormat = schema.properties[formDataPropertyName] ? schema.properties[formDataPropertyName].format : undefined;
+      // If this property is an object, the recursively call initializeFormData...
+      if (formDataPropertyType === "object") {
+        initializeFormData(schema.properties[formDataPropertyName], formData[formDataPropertyName]);
+      }
+      // Otherwise, if this is a date or date-time value, and the incoming value is null,
+      // then initialize the value to the "(Not Specified)" 0000-01-01 value...
+      else if (formDataPropertyRequired && formDataPropertyType === "string" && ["date", "date-time"].includes(formDataPropertyFormat) && formDataPropertyValue == null) {
+        formData[formDataPropertyName] = "0000-01-01";
+      }
+      // Otherwise, if this is a string, and the incoming value is null, then initialize
+      // it to the empty string...
+      else if (formDataPropertyRequired && formDataPropertyType === "string" && formDataPropertyValue == null) {
+        formData[formDataPropertyName] = "";
+      }
+      // Otherwise if this is a number, and the incoming value is null, then initialize
+      // it to the empty string...
+      else if (formDataPropertyRequired && ["number", "integer"].includes(formDataPropertyType) && formDataPropertyValue == null) {
+        formData[formDataPropertyName] = 0;
+      }
+      // Otherwise if this is a boolean, and the incoming value is null, the initialize
+      // it to the empty string, which corresponds to (Not Specified)...
+      else if (formDataPropertyRequired && formDataPropertyType === "boolean") {
+        formData[formDataPropertyName] = "";
+      }
+    }
+  }
+}
+
+export function nullifyEmptyRequiredFields(schema, formData) {
+  if (Array.isArray(formData)) {
+    for (let i = 0; i < formData.length; i++) {
+      nullifyEmptyRequiredFields(schema.items, formData[i]);
+    }
+  }
+  else if (schema && formData && typeof formData === "object") {
+    const keys = Object.keys(formData);
+    const requiredFields = schema.required;
+    for (let i = 0; i < keys.length; i++) {
+      const formDataPropertyName = keys[i];
+      const formDataPropertyValue = formData[formDataPropertyName];
+      const formDataPropertyType = schema.properties[formDataPropertyName] ? schema.properties[formDataPropertyName].type : undefined;
+      const formDataPropertyFormat = schema.properties[formDataPropertyName] ? schema.properties[formDataPropertyName].format : undefined;
+      // If this property is an object, the recursively call nullifyEmptyRequiredFields...
+      if (typeof formDataPropertyValue === "object") {
+        nullifyEmptyRequiredFields(schema.properties[formDataPropertyName], formData[formDataPropertyName]);
+      }
+      // Otherwise, if this is a date or date-time value, and the current value is the
+      // empty "0000-01-01" value, then set it to null, regardless of whether it's required or not...
+      else if (formDataPropertyType === "string" && ["date", "date-time"].includes(formDataPropertyFormat) 
+        && formDataPropertyValue && formDataPropertyValue.substring(0, Math.min(formData[formDataPropertyName].length, 10)) === "0000-01-01") {
+        formData[formDataPropertyName] = null;
+      }
+      // Otherwise, if this is a string, and it's currently empty, set it to null...
+      else if (formDataPropertyType === "string" && formDataPropertyValue === "") {
+        formData[formDataPropertyName] = null;
+      }
+      // Otherwise if this is a number, and it's currently empty, set it to null...
+      else if (["number", "integer"].includes(formDataPropertyType) && formDataPropertyValue === "") {
+        formData[formDataPropertyName] = null;
+      }
+      // Otherwise if this is a boolean, and the incoming value is null, the initialize
+      // it to the empty string, which corresponds to (Not Specified)...
+      else if (formDataPropertyType === "boolean" &&  formDataPropertyValue === "") {
+        formData[formDataPropertyName] = null;
+      }
+    }
+  }
 }
 
 export function getUiOptions(uiSchema) {

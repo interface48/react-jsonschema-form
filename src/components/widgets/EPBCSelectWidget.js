@@ -1,6 +1,6 @@
-import React, {PropTypes} from "react";
+import React, { PropTypes } from "react";
 
-import {asNumber} from "../../utils";
+import { asNumber } from "../../utils";
 
 
 /**
@@ -9,11 +9,27 @@ import {asNumber} from "../../utils";
  */
 function processValue({type, items}, value) {
   if (type === "array" && items && ["number", "integer"].includes(items.type)) {
+    // If no selections have been made, return null...
+    if (value.length === 0) {
+      return null;
+    }
     return value.map(asNumber);
   } else if (type === "boolean") {
+    // If no selection has been made, return null...
+    if (value === "") {
+      return null;
+    }
     return value === "true";
-  } else if (type === "number") {
+  } else if (["number", "integer"].includes(type)) {
+    // If no selection has been made, return null...
+    if (value === 0) {
+      return null;
+    }
     return asNumber(value);
+  }
+  // If no selection has been made, return null...
+  if (value === "") {
+    return null;
   }
   return value;
 }
@@ -37,34 +53,11 @@ function SelectWidget({
       id={id}
       multiple={multiple}
       className="form-control"
-      value={value}
+      value={value == null ? "" : value}
       required={required}
       disabled={disabled}
       readOnly={readonly}
       autoFocus={autofocus}
-      onBlur={onBlur ? onBlur : (event) => {
-        let newValue;
-        if (multiple) {
-          newValue = [].filter.call(
-            event.target.options, o => o.selected).map(o => o.value);
-          
-          if (required && newValue.length === 0) {
-            onChange(undefined);
-          } else {
-            onChange(processValue(schema, newValue))
-          }
-        } else {
-          newValue = event.target.value;
-
-          if (required 
-            && ((["number", "integer"].includes(schema.type) && asNumber(newValue) === 0) || newValue === "")) {
-            onChange(undefined);
-          } else {
-            onChange(processValue(schema, newValue));
-          }
-        }
-
-      }}
       onChange={(event) => {
         let newValue;
         if (multiple) {
@@ -74,11 +67,21 @@ function SelectWidget({
           newValue = event.target.value;
         }
         onChange(processValue(schema, newValue));
-      }}>{
-      enumOptions.map(({value, label}, i) => {
-        return <option key={i} value={value}>{label}</option>;
-      })
-    }</select>
+      } }
+      onBlur={onBlur ? onBlur : (event) => {
+        let newValue;
+        if (multiple) {
+          newValue = [].filter.call(
+            event.target.options, o => o.selected).map(o => o.value);
+        } else {
+          newValue = event.target.value;
+        }
+        onChange(processValue(schema, newValue));
+      } }>{
+        enumOptions.map(({value, label}, i) => {
+          return <option key={i} value={value == null ? "" : value}>{label}</option>;
+        })
+      }</select>
   );
 }
 

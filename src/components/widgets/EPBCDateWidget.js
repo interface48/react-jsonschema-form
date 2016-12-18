@@ -1,62 +1,67 @@
-import React, {Component, PropTypes} from "react";
+import React, { Component, PropTypes } from "react";
 
-import {shouldRender, parseDateString, toDateString, pad} from "../../utils";
+import { shouldRender, parseDateString, toDateString, pad } from "../../utils";
 
-const ASCENDING = "asc"
-const DESCENDING = "desc"
+const NOT_SPECIFIED_DATE = "0000-01-01";
+const ASCENDING = "asc";
+const DESCENDING = "desc";
+const MONTH_LABELS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-const monthLabels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+// Used to track the last complete date that was propagated up to form data,
+// which helps to propagate null up to formData at the right time, and show
+// the required field validation error as necessary
+let lastCompleteDate;
 
-function rangeOptions(type, start, stop, orderYearBy) {
-  // Capitalize the first character of the type
-  let typeLabel = type.toLowerCase().replace(/\b[a-z](?=[a-z]{2})/g, function(letter) {
-    return letter.toUpperCase(); } );
-
-  let options = [{value: -1, label: typeLabel + "..."}];
-  
-  // Check if the year's options order is DESCENDING
-  if (type === "year" && orderYearBy.toLowerCase() === DESCENDING) {
-    for (let i=stop; i>= start; i--) {
-      options.push({value: i, label: pad(i, 2)});
-    } 
-  } else {
-    // Else, set the options in ASCENDING order
-    for (let i=start; i<= stop; i++) {
-      // If the type is month, use string labels instead of integers
-      options.push({value: i, label: type === "month" ? monthLabels[i-1] : pad(i, 2)});
-    } 
-  }
-
-  return options;
-}
-
-function readyForChange(state) {
-  return Object.keys(state).every(key => {
-    return state[key] !== -1
-  });
-}
-
-function DateElement(props) {
+const DateElement = (props) => {
   const {type, range, value, select, onBlur, rootId, disabled, readonly, autofocus, registry, widgetOptions} = props;
   const id = rootId + "_" + type;
   const {SelectWidget} = registry.widgets;
   return (
     <SelectWidget
-      schema={{type: "integer"}}
+      schema={{ type: "integer" }}
       id={id}
       className="form-control"
-      options={{enumOptions: rangeOptions(type, range[0], range[1], widgetOptions.orderYearBy)}}
+      options={{ enumOptions: configureDateOptions(type, range[0], range[1], widgetOptions.orderYearBy) }}
       value={value}
       disabled={disabled}
       readonly={readonly}
       autofocus={autofocus}
       onBlur={(value) => onBlur(type, value)}
-      onChange={(value) => select(type, value)}/>
+      onChange={(value) => select(type, value)} />
   );
 }
 
-function daysInMonth(year, month) {
-    return new Date(year, month, 0).getDate();
+const isCompleteDate = (state) => {
+  return Object.keys(state).every(key => {
+    return state[key] !== -1
+  });
+}
+
+const configureDateOptions = (type, start, stop, orderYearBy) => {
+  // Capitalize the first character of the date type (i.e. year, month, day, etc.)
+  const typeLabel = type.toLowerCase().replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
+    return letter.toUpperCase();
+  });
+  // Initialize the list of options with the default option (i.e. Year..., Month..., Day..., etc.)
+  let options = [{ value: -1, label: typeLabel + "..." }];
+  // If getting  options for year, and they are to be sorted in descending order...
+  if (type === "year" && orderYearBy.toLowerCase() === DESCENDING) {
+    for (let i = stop; i >= start; i--) {
+      options.push({ value: i, label: pad(i, 2) });
+    }
+  }
+  // Otherwise, for all other year, month and day options, sort in ascending order...
+  else {
+    for (let i = start; i <= stop; i++) {
+      // If the type is month, use string labels instead of integers
+      options.push({ value: i, label: type === "month" ? MONTH_LABELS[i - 1] : pad(i, 2) });
+    }
+  }
+  return options;
+}
+
+const getDaysInMonth = (year, month) => {
+  return new Date(year, month, 0).getDate();
 }
 
 class EPBCDateWidget extends Component {
@@ -75,70 +80,76 @@ class EPBCDateWidget extends Component {
 
   constructor(props) {
     super(props);
-    // If the "null" (0000-01-01) date set to empty string so that parseDateString will set the date
-    // to an unset date state of { year: -1, month: -1, day: -1 }
-    this.state = parseDateString(props.value === "0000-01-01" ? "" : props.value, props.time);
+    // If this is the not specified date (0000-01-01), set it to the empty string so that parseDateString 
+    // will set the date to an unset date state of { year: -1, month: -1, day: -1 }
+    lastCompleteDate = props.value === NOT_SPECIFIED_DATE ? "" : props.value;
+    this.state = parseDateString(lastCompleteDate, props.time);
   }
 
-  componentWillReceiveProps(nextProps) {
-    // Only change the date if it is not a "null" (0000-01-01) or undefined date
-    if (nextProps.value !== "0000-01-01" && nextProps.value !== undefined) {
-      this.setState(parseDateString(nextProps.value, nextProps.time));
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   // Only change the date if it is not an empty (0000-01-01) or undefined date
+  //   if (nextProps.value !== NOT_SPECIFIED_DATE && nextProps.value != null) {
+  //     this.setState(parseDateString(nextProps.value, nextProps.time));
+  //   }
+  // }
 
   shouldComponentUpdate(nextProps, nextState) {
     return shouldRender(this, nextProps, nextState);
   }
 
-  onBlur = (property, value) => {
-    value = parseInt(value);
+  processValue = (value) => {
+    lastCompleteDate = value;
+    return lastCompleteDate;
+  }
 
-    // If the year has changed, and month and day is set
-    if (property === "day" && (value === -1 || this.state.month === -1 || this.state.day === -1)){
-      this.props.onChange(undefined);
+  onBlur = (property, value) => {
+    // If one or more of the inputs are not yet set, propagate null...
+    if (lastCompleteDate !== "" && (this.state.month === -1 || this.state.month === -1 || this.state.day === -1)) {
+      this.props.onChange(this.processValue(null));
     }
   };
 
   onChange = (property, value) => {
     value = parseInt(value);
-
     let newState;
-
-    // If the year has changed, and month and day is set
-    if (property === "year" && this.state.month !== -1 && this.state.day !== -1){
+    // If the year has changed, and month and day is set...
+    if (property === "year" && this.state.month !== -1 && this.state.day !== -1) {
       let newYearValue = value;
-
       // Check if the currently set day is within the new year and month
-      if (this.state.day <= daysInMonth(newYearValue, this.state.month)) {
-        newState = {[property]: value};
-      } else {
+      if (this.state.day <= getDaysInMonth(newYearValue, this.state.month)) {
+        newState = { [property]: value };
+      } 
+      else {
         // Else, deselect the day
-        newState = {[property]: value, day: -1};
+        newState = { [property]: value, day: -1 };
       }
-    
-    // If the month has changed, and year and day is set
-    } else if (property === "month" && this.state.year !== -1 && this.state.day !== -1) {
+    } 
+    // Otherwise, if the month has changed, and year and day is set...
+    else if (property === "month" && this.state.year !== -1 && this.state.day !== -1) {
       let newMonthValue = value
       // Check if the currently set day is within the year and new month
-      if (this.state.day <= daysInMonth(this.state.year, newMonthValue)) {
-        newState = {[property]: value};
-      } else {
+      if (this.state.day <= getDaysInMonth(this.state.year, newMonthValue)) {
+        newState = { [property]: value };
+      } 
+      else {
         // Else, deselect the day
-        newState = {[property]: value, day: -1};
+        newState = { [property]: value, day: -1 };
       }
-    } else {
-      // Else, set the date as usual
-      newState = {[property]: value};
+    } 
+    // Otherwise, the date must have changed - nothing special here...
+    else {
+      newState = { [property]: value };
     }
 
     this.setState(newState, () => {
-      // Only propagate to parent state if we have a complete date{time}
-      if (readyForChange(this.state)) {
-         this.props.onChange(toDateString(this.state, this.props.time));
-      } else {
-        // Else, set the date to undefined
-        this.props.onChange("0000-01-01");
+      // If we have a complete date (i.e. year, month, day specified), then propagate the
+      // value up to the parent form...
+      if (isCompleteDate(this.state)) {
+        this.props.onChange(this.processValue(toDateString(this.state, this.props.time)));
+      }
+      // Otherwise, set the date to null if we are starting to modify a previously valid date...
+      else if (lastCompleteDate !== "" && (this.state.year === -1 || this.state.month === -1 || this.state.day === -1)) {
+        this.props.onChange(this.processValue(null));
       }
     });
   };
@@ -150,7 +161,7 @@ class EPBCDateWidget extends Component {
       return;
     }
     const nowDateObj = parseDateString(new Date().toJSON(), time);
-    this.setState(nowDateObj, () => onChange(toDateString(this.state, time)));
+    this.setState(nowDateObj, () => onChange(this.processValue(toDateString(this.state, time))));
   };
 
   clear = (event) => {
@@ -159,27 +170,26 @@ class EPBCDateWidget extends Component {
     if (disabled || readonly) {
       return;
     }
-    this.setState(parseDateString("", time), () => onChange("0000-01-01"));
+    this.setState(parseDateString("", time), () => onChange(this.processValue(null)));
   };
 
   get dateElementProps() {
     const {time, options} = this.props;
     const {year, month, day, hour, minute, second} = this.state;
-
     // If the year and month are set, then calculate the max number of days,
     // otherwise, set to days in the month to 31 
-    let maxDays = year !== -1 && month !== -1 ? daysInMonth(year, month) : 31;
+    let maxDays = year !== -1 && month !== -1 ? getDaysInMonth(year, month) : 31;
 
     const data = [
-      {type: "year", range: [options.yearRange[0], options.yearRange[1]], value: year},
-      {type: "month", range: [1, 12], value: month},
-      {type: "day", range: [1, maxDays], value: day},
+      { type: "year", range: [options.yearRange[0], options.yearRange[1]], value: year },
+      { type: "month", range: [1, 12], value: month },
+      { type: "day", range: [1, maxDays], value: day },
     ];
     if (time) {
       data.push(
-        {type: "hour", range: [0, 23], value: hour},
-        {type: "minutes", range: [0, 59], value: minute},
-        {type: "seconds", range: [0, 59], value: second}
+        { type: "hour", range: [0, 23], value: hour },
+        { type: "minutes", range: [0, 59], value: minute },
+        { type: "seconds", range: [0, 59], value: second }
       );
     }
     return data;
@@ -196,21 +206,21 @@ class EPBCDateWidget extends Component {
               onBlur={this.onBlur}
               select={this.onChange}
               {...elemProps}
-              disabled= {disabled}
+              disabled={disabled}
               readonly={readonly}
               registry={registry}
               autofocus={autofocus && i === 0}
-              widgetOptions={options}/>
+              widgetOptions={options} />
           </li>
         ))
       }
         {options.enableNow ? <li>
           <a href="#" className="btn btn-info btn-now"
-             onClick={this.setNow}>Now</a>
+            onClick={this.setNow}>Now</a>
         </li> : null}
         {options.enableClear ? <li>
           <a href="#" className="btn btn-warning btn-clear"
-             onClick={this.clear}>Clear</a>
+            onClick={this.clear}>Clear</a>
         </li> : null}
       </ul>
     );

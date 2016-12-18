@@ -1,6 +1,5 @@
 import React, {PropTypes} from "react";
 
-
 function RadioWidget({
   schema,
   options,
@@ -18,14 +17,14 @@ function RadioWidget({
   return (
     <div className="field-radio-group">{
       enumOptions.map((option, i) => {
-        const checked = option.value === value;
+        const checked = option.value === (value == null ? "" : value);
         const disabledCls = disabled ? "disabled" : "";
         const radio = (
           <span>
             <input type="radio"
               checked={checked}
               name={name}
-              value={option.value ? option.value : null}
+              value={option.value}
               disabled={disabled}
               autoFocus={autofocus && i === 0}
               onChange={_ => onChange(option.value)}/>

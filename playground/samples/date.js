@@ -22,6 +22,7 @@ module.exports = {
         title: "Alternative",
         description: "These work on most platforms.",
         type: "object",
+        required: ["epbc-date"],
         properties: {
           "alt-datetime": {
             type: "string",
@@ -32,6 +33,7 @@ module.exports = {
             format: "date"
           },
           "epbc-date": {
+            title: "EPBC Date",
             type: "string",
             format: "date"
           }
@@ -61,5 +63,9 @@ module.exports = {
       }
     }
   },
-  formData: {}
+  formData: {
+    "alternative": {
+      "epbc-date": null
+    }
+  }
 };

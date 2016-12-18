@@ -3,7 +3,7 @@ module.exports = {
     title: "A registration form",
     description: "A simple form example.",
     type: "object",
-    required: ["firstName", "lastName"],
+    required: ["lastName", "booleanRadio"],
     properties: {
       firstName: {
         type: "string",
@@ -65,10 +65,11 @@ module.exports = {
     }
   },
   formData: {
-    firstName: "Chuck",
-    lastName: "Norris",
-    age: 75,
+    firstName: null,
+    lastName: null,
+    age: null,
     bio: "Roundhouse kicking asses since 1940",
-    password: "noneed"
+    password: "noneed",
+    "booleanRadio": null
   }
 };
