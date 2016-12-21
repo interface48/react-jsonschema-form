@@ -199,7 +199,7 @@ function formatJsonValidateResult(jsonValidateResult){
   }
 
   // Evaluate extended validations (if present) if this form is bound to an object...
-  if (typeof formData === "object") {
+  if (formData && typeof formData === "object") {
     evaluateExtendedValidations(schema, formData, "instance");
   }
 
