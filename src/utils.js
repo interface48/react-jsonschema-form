@@ -195,9 +195,9 @@ function initializeFormData(schema, formData) {
       else if (formDataPropertyRequired && ["number", "integer"].includes(formDataPropertyType) && formDataPropertyValue == null) {
         formData[formDataPropertyName] = 0;
       }
-      // Otherwise if this is a boolean, and the incoming value is null, the initialize
+      // Otherwise if this is a boolean, and the incoming value is null, then initialize
       // it to the empty string, which corresponds to (Not Specified)...
-      else if (formDataPropertyRequired && formDataPropertyType === "boolean") {
+      else if (formDataPropertyRequired && formDataPropertyType === "boolean" && formDataPropertyValue == null) {
         formData[formDataPropertyName] = "";
       }
     }
