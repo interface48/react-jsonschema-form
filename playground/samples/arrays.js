@@ -1,6 +1,14 @@
 module.exports = {
   schema: {
     type: "object",
+    required: [
+      "listOfStrings",
+      "multipleChoicesList",
+      "fixedItemsList",
+      "nestedList",
+      "unorderable",
+      "unremovable"
+    ],
     properties: {
       listOfStrings: {
         type: "array",
@@ -136,8 +144,8 @@ module.exports = {
     }
   },
   formData: {
-    listOfStrings: ["foo", "bar"],
-    multipleChoicesList: ["foo", "bar"],
+    listOfStrings: ["foo", null, "bar"],
+    multipleChoicesList: null,
     fixedItemsList: ["Some text", true, 123],
     nestedList: [["lorem", "ipsum"], ["dolor"]],
     unorderable: ["one", "two"],

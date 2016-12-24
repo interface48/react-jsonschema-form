@@ -162,12 +162,8 @@ export function getDefaultFormState(_schema, formData, definitions={}, initializ
 }
 
 function initializeFormData(schema, formData) {
-  if (Array.isArray(formData)) {
-    for (let i = 0; i < formData.length; i++) {
-      initializeFormData(schema.items, formData[i]);
-    }
-  }
-    else if (schema && formData && typeof formData === "object") {
+  
+    if (schema && formData && typeof formData === "object") {
     const keys = Object.keys(formData);
     const requiredFields = schema.required;
     for (let i = 0; i < keys.length; i++) {
@@ -179,6 +175,21 @@ function initializeFormData(schema, formData) {
       // If this property is an object, the recursively call initializeFormData...
       if (formDataPropertyType === "object") {
         initializeFormData(schema.properties[formDataPropertyName], formData[formDataPropertyName]);
+      }
+      // Otherwise, if this is an array
+      else if (formDataPropertyType === "array") {
+
+          // and the incoming value is null, then initialize it to an empty arrray...
+          if (formData[formDataPropertyName] === null) {
+            formData[formDataPropertyName] = [];
+          }
+
+          // TODO: Add logic to recursively intitialize array items and any nested arrays
+          // else {
+          //   for (let i = 0; i < formData[formDataPropertyName].length; i++) {
+          //     initializeFormData(schema.properties[formDataPropertyName].items, formData[formDataPropertyName][i]);
+          //   }
+          // }
       }
       // Otherwise, if this is a date or date-time value, and the incoming value is null,
       // then initialize the value to the "(Not Specified)" 0000-01-01 value...
@@ -205,12 +216,7 @@ function initializeFormData(schema, formData) {
 }
 
 export function nullifyEmptyRequiredFields(schema, formData) {
-  if (Array.isArray(formData)) {
-    for (let i = 0; i < formData.length; i++) {
-      nullifyEmptyRequiredFields(schema.items, formData[i]);
-    }
-  }
-  else if (schema && formData && typeof formData === "object") {
+  if (schema && formData && typeof formData === "object") {
     const keys = Object.keys(formData);
     const requiredFields = schema.required;
     for (let i = 0; i < keys.length; i++) {
@@ -219,8 +225,17 @@ export function nullifyEmptyRequiredFields(schema, formData) {
       const formDataPropertyType = schema.properties[formDataPropertyName] ? schema.properties[formDataPropertyName].type : undefined;
       const formDataPropertyFormat = schema.properties[formDataPropertyName] ? schema.properties[formDataPropertyName].format : undefined;
       // If this property is an object, the recursively call nullifyEmptyRequiredFields...
-      if (typeof formDataPropertyValue === "object") {
+      if (formDataPropertyType === "object") {
         nullifyEmptyRequiredFields(schema.properties[formDataPropertyName], formData[formDataPropertyName]);
+      }
+      // Otherwise, if this is an array...
+      else if (formDataPropertyType === "array") {
+
+        // And the array is empty, set it to null...
+        if (Array.isArray(formDataPropertyValue) && formDataPropertyValue.length === 0) {
+          formData[formDataPropertyName] = null;
+        }
+        // TODO: Add logic to recursively nullify array items and any nested arrays
       }
       // Otherwise, if this is a date or date-time value, and the current value is the
       // empty "0000-01-01" value, then set it to null, regardless of whether it's required or not...
@@ -238,7 +253,7 @@ export function nullifyEmptyRequiredFields(schema, formData) {
       }
       // Otherwise if this is a boolean, and the incoming value is null, the initialize
       // it to the empty string, which corresponds to (Not Specified)...
-      else if (formDataPropertyType === "boolean" &&  formDataPropertyValue === "") {
+      else if (formDataPropertyType === "boolean" && formDataPropertyValue === "") {
         formData[formDataPropertyName] = null;
       }
     }
