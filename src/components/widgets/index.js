@@ -3,10 +3,9 @@ import AltDateTimeWidget from "./AltDateTimeWidget";
 import CheckboxWidget from "./CheckboxWidget";
 import CheckboxesWidget from "./CheckboxesWidget";
 import ColorWidget from "./ColorWidget";
-import DateWidget from "./DateWidget";
+import DateWidget from "./EPBCDateWidget";
 import DateTimeWidget from "./DateTimeWidget";
 import EmailWidget from "./EmailWidget";
-import EPBCDateWidget from "./EPBCDateWidget";
 import FileWidget from "./FileWidget";
 import HiddenWidget from "./HiddenWidget";
 import PasswordWidget from "./PasswordWidget";
@@ -29,7 +28,6 @@ export default {
   DateWidget,
   DateTimeWidget,
   AltDateWidget,
-  EPBCDateWidget,
   AltDateTimeWidget,
   EmailWidget,
   URLWidget,

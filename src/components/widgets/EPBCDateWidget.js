@@ -21,7 +21,7 @@ const DateElement = (props) => {
       schema={{ type: "integer" }}
       id={id}
       className="form-control"
-      options={{ enumOptions: configureDateOptions(type, range[0], range[1], widgetOptions.orderYearBy) }}
+      options={{ enumOptions: configureDateOptions(type, range[0], range[1], widgetOptions.yearRange.sort) }}
       value={value}
       disabled={disabled}
       readonly={readonly}
@@ -71,10 +71,14 @@ class EPBCDateWidget extends Component {
     readonly: false,
     autofocus: false,
     options: {
-      yearRange: [new Date().getFullYear() - 100, new Date().getFullYear()],
-      enableNow: true,
-      enableClear: true,
-      orderYearBy: "ASC"
+      yearRange: {
+        relativeStart: -100,
+        relativeEnd: 3,
+        sort: "DESC"
+      },
+      enableNow: false,
+      enableClear: false,
+      
     }
   };
 
@@ -176,12 +180,18 @@ class EPBCDateWidget extends Component {
   get dateElementProps() {
     const {time, options} = this.props;
     const {year, month, day, hour, minute, second} = this.state;
+
     // If the year and month are set, then calculate the max number of days,
     // otherwise, set to days in the month to 31 
     let maxDays = year !== -1 && month !== -1 ? getDaysInMonth(year, month) : 31;
 
+    const currentYear = new Date().getFullYear();
+
+    const rangeStart = currentYear + options.yearRange.relativeStart;
+    const rangeEnd = currentYear + options.yearRange.relativeEnd;
+
     const data = [
-      { type: "year", range: [options.yearRange[0], options.yearRange[1]], value: year },
+      { type: "year", range: [rangeStart, rangeEnd], value: year },
       { type: "month", range: [1, 12], value: month },
       { type: "day", range: [1, maxDays], value: day },
     ];
@@ -237,10 +247,15 @@ if (process.env.NODE_ENV !== "production") {
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
     options: PropTypes.shape({
-      yearRange: PropTypes.array,
+      yearRange: PropTypes.shape(
+        {
+          relativeStart: PropTypes.number,
+          relativeEnd: PropTypes.number,
+          sort: PropTypes.string,
+        }
+      ),
       enableNow: PropTypes.bool,
       enableClear: PropTypes.bool,
-      orderYearBy: PropTypes.string
     }),
     onChange: PropTypes.func,
     time: PropTypes.bool,

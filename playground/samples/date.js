@@ -7,12 +7,14 @@ module.exports = {
         title: "Native",
         description: "May not work on some browsers, notably Firefox Desktop and IE.",
         type: "object",
+        required: ["date"],
         properties: {
           "datetime": {
             type: "string",
             format: "date-time"
           },
           "date": {
+            title: "date",
             type: "string",
             format: "date"
           }
@@ -22,7 +24,6 @@ module.exports = {
         title: "Alternative",
         description: "These work on most platforms.",
         type: "object",
-        required: ["epbc-date"],
         properties: {
           "alt-datetime": {
             type: "string",
@@ -31,41 +32,38 @@ module.exports = {
           "alt-date": {
             type: "string",
             format: "date"
-          },
-          "epbc-date": {
-            title: "EPBC Date",
-            type: "string",
-            format: "date"
           }
         }
       }
     }
   },
   uiSchema: {
+    native: {
+      "date": {
+        "ui:widget": "date",
+        "ui:options": {
+          "yearRange": {
+            "relativeStart": -100,
+            "relativeEnd": -10,
+            "sort": "DESC"
+          },
+          "enableNow": false,
+          "enableClear": true
+        }
+      }
+    },
     alternative: {
       "alt-datetime": {
         "ui:widget": "alt-datetime"
       },
       "alt-date": {
         "ui:widget": "alt-date"
-      },
-      "epbc-date": {
-        "ui:widget": "epbc-date",
-        "ui:options": {
-          "yearRange": [
-            1900,
-            2000
-          ],
-          "enableNow": false,
-          "enableClear": true,
-          "orderYearBy": "DESC"
-        }
       }
     }
   },
   formData: {
-    "alternative": {
-      "epbc-date": null
+    native: {
+      date: null
     }
   }
 };
