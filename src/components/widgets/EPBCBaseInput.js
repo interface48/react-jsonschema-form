@@ -16,7 +16,6 @@ class BaseInput extends Component {
   }
 
   onChange() {
-    const {onChange, type} = this.props;
     return (event) => {
       const value = event.target.value;      
       this.setState({ value: value });
@@ -24,7 +23,7 @@ class BaseInput extends Component {
   }
 
   onBlur() {
-    const {onChange, type} = this.props;
+    const {onChange} = this.props;
     return (event) => {
       const value = event.target.value; 
         this.setState({ value: value }, () => { 

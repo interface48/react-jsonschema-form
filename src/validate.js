@@ -216,7 +216,7 @@ function formatJsonValidateResult(jsonValidateResult){
       propParentPath.shift();
     }
     const propParentSchema = propParentPath.reduce((parent, prop) => {
-      if (typeof prop === "number") {
+      if (parent.type === "array") {
         return parent.items;
       }
       return parent.properties[prop];
