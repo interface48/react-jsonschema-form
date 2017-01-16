@@ -24,11 +24,46 @@ function StringField(props) {
   } = props;
   const {title, format} = schema;
   const {widgets, formContext} = registry;
-  const enumOptions = Array.isArray(schema.enum) && optionsList(schema);
   const defaultWidget = format || (enumOptions ? "select" : "text");
   const {widget=defaultWidget, placeholder="", ...options} = getUiOptions(uiSchema);
   const Widget = getWidget(schema, widget, widgets);
-  
+  let enumOptions;
+
+  const schemaEnumIsArray = Array.isArray(schema.enum);
+
+  const isContainsNotSpecifiedOption = schemaEnumIsArray && schema.enum.indexOf("") > -1 ? true : false;
+
+  // Otherwise, if the widget to be used is a radio button group, null is an option, so
+  // include it as the right-most (or bottom-most) option...
+  if (widget === "radio") {
+    if (schemaEnumIsArray && !isContainsNotSpecifiedOption) {
+      schema.enum.push("");
+      schema.enumNames.push("(Not Specified)");
+    }
+
+    enumOptions = schemaEnumIsArray && optionsList({
+      enum: schema.enum,
+      enumNames: schema.enumNames
+    });
+  }
+  // Otherwise, if the widget to be used is a select input, null is an option, so include
+  // it as the first option...
+  else if (widget === "select") {
+    if (schemaEnumIsArray && !isContainsNotSpecifiedOption) {
+      schema.enum.unshift("");
+      schema.enumNames.unshift("Select " + schema.title + " ...");
+    }
+
+    enumOptions = schemaEnumIsArray && optionsList({
+      enum: schema.enum,
+      enumNames: schema.enumNames
+    });
+  }
+  // Otherwise, if the widget to be used as a string field
+  else {
+    enumOptions = schemaEnumIsArray && optionsList(schema);
+  }
+
   return <Widget
     options={{...options, enumOptions}}
     schema={schema}
