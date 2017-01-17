@@ -1,7 +1,7 @@
 import React, {PropTypes} from "react";
 
 
-function CheckboxWidget({
+function ConsentWidget({
   schema,
   id,
   value,
@@ -15,22 +15,22 @@ function CheckboxWidget({
       <label>
         <input type="checkbox"
           id={id}
-          checked={value ? value : false}
+          checked={value ? value : null}
           disabled={disabled}
           autoFocus={autofocus}
-          onChange={(event) => onChange(event.target.checked)}/>
+          onChange={(event) => onChange(event.target.checked || null)}/>
         <span>{label}</span>
       </label>
     </div>
   );
 }
 
-CheckboxWidget.defaultProps = {
+ConsentWidget.defaultProps = {
   autofocus: false,
 };
 
 if (process.env.NODE_ENV !== "production") {
-  CheckboxWidget.propTypes = {
+  ConsentWidget.propTypes = {
     schema: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     value: PropTypes.bool,
@@ -40,4 +40,4 @@ if (process.env.NODE_ENV !== "production") {
   };
 }
 
-export default CheckboxWidget;
+export default ConsentWidget;

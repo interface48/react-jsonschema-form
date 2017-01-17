@@ -4,6 +4,7 @@ import "setimmediate";
 const widgetMap = {
   boolean: {
     checkbox: "CheckboxWidget",
+    consent: "ConsentWidget",
     radio: "RadioWidget",
     select: "SelectWidget",
     hidden: "HiddenWidget",

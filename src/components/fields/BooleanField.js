@@ -56,14 +56,20 @@ function BooleanField(props) {
       enumNames: schema.enumNames || ["Select " + schema.title + " ...", "Yes", "No"]
     });
   }
+  // Otherwise, if the widget to be used is a consent checkbox, null is an option, so include
+  // it as the first option...
+  else if (widget === "consent") {
+  }
   // Otherwise, if the widget to be used is a checkbox or some other field, the value can 
   // assume the value can only be true or false, and null (i.e. not specified) is not an option...
-  else {
-    enumOptions = optionsList({
-      enum: [true, false],
-      enumNames: schema.enumNames || ["Yes", "No"]
-    });
-  }
+  // Below is commented out because if the widget to be used is neither a radio or select widget,
+  // then the options prop is never used.
+  // else {
+  //   enumOptions = optionsList({
+  //     enum: [true, false],
+  //     enumNames: schema.enumNames || ["Yes", "No"]
+  //   });
+  // }
 
   return <Widget
     options={{ ...options, enumOptions }}

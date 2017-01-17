@@ -3,7 +3,7 @@ module.exports = {
     title: "A registration form",
     description: "A simple form example.",
     type: "object",
-    required: ["lastName", "booleanRadio"],
+    required: ["lastName", "booleanRadio", "booleanConsent"],
     properties: {
       firstName: {
         type: "string",
@@ -66,6 +66,12 @@ module.exports = {
         "type": "boolean",
         "title": "Boolean Checkbox",
         "default": false
+      },
+      "booleanConsent": {
+        "type": "boolean",
+        "title": "Consent",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vitae lectus id libero sollicitudin efficitur et nec justo. Sed eleifend pulvinar neque, non efficitur urna vehicula eu. Aenean a auctor urna, quis euismod mauris. Pellentesque elit nunc, bibendum at lacus a, ullamcorper volutpat enim. Nullam non fringilla metus. Donec facilisis tortor eleifend magna interdum, quis aliquam ex tempus. Mauris feugiat metus volutpat elit accumsan cursus. Mauris id urna nec magna facilisis varius sit amet non lorem. Phasellus molestie, mauris sit amet egestas dapibus, neque ligula convallis nulla, sed imperdiet quam ligula in magna. Donec dui ex, laoreet vel volutpat in, interdum ut tortor.",
+        "default": null
       },
       "stringSelectEnum": {
         "type": "string",
@@ -155,6 +161,9 @@ module.exports = {
     booleanCheckbox: {
       "ui:widget": "checkbox"
     },
+    booleanConsent: {
+      "ui:widget": "consent"
+    },
     stringSelectEnum: {
       "ui:widget": "select"
     },
@@ -177,6 +186,7 @@ module.exports = {
     age: null,
     bio: "Roundhouse kicking asses since 1940",
     password: "noneed",
-    "booleanRadio": null
+    "booleanRadio": null,
+    "booleanConsent": null
   }
 };

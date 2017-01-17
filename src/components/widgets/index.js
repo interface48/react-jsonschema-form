@@ -2,6 +2,7 @@ import AltDateWidget from "./AltDateWidget";
 import AltDateTimeWidget from "./AltDateTimeWidget";
 import CheckboxWidget from "./CheckboxWidget";
 import CheckboxesWidget from "./CheckboxesWidget";
+import ConsentWidget from "./ConsentWidget";
 import ColorWidget from "./ColorWidget";
 import DateWidget from "./EPBCDateWidget";
 import DateTimeWidget from "./DateTimeWidget";
@@ -37,4 +38,5 @@ export default {
   FileWidget,
   CheckboxWidget,
   CheckboxesWidget,
+  ConsentWidget
 };
