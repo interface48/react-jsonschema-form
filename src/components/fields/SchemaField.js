@@ -155,12 +155,12 @@ function SchemaField(props) {
   if (schema.type === "object") {
     displayLabel = false;
   }
-  // Because we've defaulted to using the radio button widget for booleans,
-  // display the label for the radio button group that was otherwise being
-  // suppressed because it was previously being used as the checkbox label
-  // if (schema.type === "boolean" && !uiSchema["ui:widget"]) {
-  //   displayLabel = false;
-  // }
+  // Suppress display of fields labels for checkbox and consent widgets, since they are
+  // already included within the checkbox label...
+  if (schema.type === "boolean" 
+  && (uiSchema["ui:widget"] === "checkbox" || uiSchema["ui:widget"] === "consent")) {
+    displayLabel = false;
+  }
   if (uiSchema["ui:field"]) {
     displayLabel = false;
   }

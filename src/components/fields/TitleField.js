@@ -4,7 +4,9 @@ const OPTIONAL_FIELD_SYMBOL = " (Optional)";
 
 function TitleField(props) {
   const {id, title, required} = props;
-  const legend = required ? title : title + OPTIONAL_FIELD_SYMBOL;
+  // Do not include optional discriminator on section titles
+  // const legend = required ? title : title + OPTIONAL_FIELD_SYMBOL;
+  const legend = title;
   return <legend id={id}>{legend}</legend>;
 }
 
