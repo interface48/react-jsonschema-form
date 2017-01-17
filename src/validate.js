@@ -230,31 +230,38 @@ function formatJsonValidateResult(jsonValidateResult){
     // instead...
     if (["minLength", "enum"].indexOf(error.name) > -1 && !error["instance"]) {
       const { propName, propParentSchema } = getPropNameAndParentSchema(error);
-      if (propParentSchema.required && propParentSchema.required.indexOf(propName) > -1) {
-        return false;
-      }
+      
+      return false;
     }
     // Otherwise, if this is a type validation error and the value is null,
     // suppress the error if it is for an optional field...
     else if(error.name === "type" && error.schema.type !== "boolean" && !error["instance"]) {
       const { propName, propParentSchema } = getPropNameAndParentSchema(error);
+      // If the field is not required, ignore the type error and allow the value to be null...
       if (!(propParentSchema.required && propParentSchema.required.indexOf(propName) > -1)) {
         return false;
       }
     }
     // Otherwise, if this is a type validation error for a boolean field...
-    else if(error.name === "type" && error.schema.type === "boolean") {
-      const propPath = toPath(error.property);
-      if (propPath[0] === "instance") {
-        propPath.shift();
-      }      
-      const propValue = get(formData, propPath);
-      // If the type error is for a required field currently set to the empty string,
-      // then suppress the error since this corresponds to the initialized (Not Specified)
-      // option, otherwise we do want to show it if it is null (i.e. the user has interacted
-      // with the field)
-      if (propValue === "") {
+    else if(error.name === "type" && error.schema.type === "boolean" && !error["instance"]) {
+      const { propName, propParentSchema } = getPropNameAndParentSchema(error);
+      // If the field is not required, ignore the type error and allow the value to be null...
+      if (!(propParentSchema.required && propParentSchema.required.indexOf(propName) > -1)) {
         return false;
+      }
+      else {
+        const propPath = toPath(error.property);
+        if (propPath[0] === "instance") {
+          propPath.shift();
+        }      
+        const propValue = get(formData, propPath);
+        // If the type error is for a required field currently set to the empty string,
+        // then suppress the error since this corresponds to the initialized (Not Specified)
+        // option, otherwise we do want to show it if it is null (i.e. the user has interacted
+        // with the field)
+        if (propValue === "") {
+          return false;
+        }
       }
     }
     return true;
