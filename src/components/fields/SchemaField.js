@@ -152,16 +152,19 @@ function SchemaField(props) {
   if (schema.type === "array") {
     displayLabel = isMultiSelect(schema) || isFilesArray(schema, uiSchema);
   }
-  if (schema.type === "object") {
+  else if (schema.type === "object") {
     displayLabel = false;
   }
   // Suppress display of fields labels for checkbox and consent widgets, since they are
   // already included within the checkbox label...
-  if (schema.type === "boolean" 
+  else if (schema.type === "boolean" 
   && (uiSchema["ui:widget"] === "checkbox" || uiSchema["ui:widget"] === "consent")) {
     displayLabel = false;
   }
-  if (uiSchema["ui:field"]) {
+  else if (uiSchema["ui:field"]) {
+    displayLabel = false;
+  }
+  else if (uiSchema["ui:hideLabel"]) {
     displayLabel = false;
   }
 
