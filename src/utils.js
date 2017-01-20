@@ -248,7 +248,7 @@ export function nullifyEmptyRequiredFields(schema, formData) {
         formData[formDataPropertyName] = null;
       }
       // Otherwise if this is a number, and it's currently empty, set it to null...
-      else if (["number", "integer"].includes(formDataPropertyType) && formDataPropertyValue === "") {
+      else if (["number", "integer"].includes(formDataPropertyType) && (formDataPropertyValue === "" || formDataPropertyValue === 0)) {
         formData[formDataPropertyName] = null;
       }
       // Otherwise if this is a boolean, and the incoming value is null, the initialize
