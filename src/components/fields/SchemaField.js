@@ -8,7 +8,7 @@ import {
 } from "../../utils";
 import UnsupportedField from "./UnsupportedField";
 
-const OPTIONAL_FIELD_SYMBOL = " (Optional)";
+const OPTIONAL_FIELD_SYMBOL = "(Optional)";
 const COMPONENT_TYPES = {
   array:   "ArrayField",
   boolean: "BooleanField",
@@ -38,7 +38,7 @@ function Label(props) {
   }
   return (
     <label className="control-label" htmlFor={id}>
-      {required ? label : label + OPTIONAL_FIELD_SYMBOL}
+      {label}{required ? null : <i> {OPTIONAL_FIELD_SYMBOL}</i>}
     </label>
   );
 }
