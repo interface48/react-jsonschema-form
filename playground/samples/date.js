@@ -47,7 +47,7 @@ module.exports = {
             "relativeEnd": -10,
             "sort": "DESC"
           },
-          "enableNow": false,
+          "enableNow": true,
           "enableClear": true
         }
       }
