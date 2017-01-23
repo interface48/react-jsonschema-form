@@ -7,11 +7,6 @@ const ASCENDING = "asc";
 const DESCENDING = "desc";
 const MONTH_LABELS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-// Used to track the last complete date that was propagated up to form data,
-// which helps to propagate null up to formData at the right time, and show
-// the required field validation error as necessary
-let lastCompleteDate;
-
 const DateElement = (props) => {
   const {type, range, value, select, onBlur, rootId, disabled, readonly, autofocus, registry, widgetOptions} = props;
   const id = rootId + "_" + type;
@@ -22,7 +17,7 @@ const DateElement = (props) => {
       id={id}
       className="form-control"
       options={{ enumOptions: configureDateOptions(type, range[0], range[1], widgetOptions.yearRange.sort) }}
-      value={value}
+      value={value ? value : -1}
       disabled={disabled}
       readonly={readonly}
       autofocus={autofocus}
@@ -33,7 +28,7 @@ const DateElement = (props) => {
 
 const isCompleteDate = (state) => {
   return Object.keys(state).every(key => {
-    return state[key] !== -1
+    return state[key] !== -1 && state[key] !== null
   });
 }
 
@@ -84,33 +79,33 @@ class EPBCDateWidget extends Component {
 
   constructor(props) {
     super(props);
+
     // If this is the not specified date (0000-01-01), set it to the empty string so that parseDateString 
     // will set the date to an unset date state of { year: -1, month: -1, day: -1 }
-    lastCompleteDate = props.value === NOT_SPECIFIED_DATE ? "" : props.value;
-    this.state = parseDateString(lastCompleteDate, props.time);
+    this.state = parseDateString(props.value === NOT_SPECIFIED_DATE ? "" : props.value, props.time);
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   // Only change the date if it is not an empty (0000-01-01) or undefined date
-  //   if (nextProps.value !== NOT_SPECIFIED_DATE && nextProps.value != null) {
-  //     this.setState(parseDateString(nextProps.value, nextProps.time));
-  //   }
-  // }
 
   shouldComponentUpdate(nextProps, nextState) {
     return shouldRender(this, nextProps, nextState);
   }
 
-  processValue = (value) => {
-    lastCompleteDate = value;
-    return lastCompleteDate;
+  componentWillReceiveProps(nextProps) {
+    this.setState(parseDateString(nextProps.value === NOT_SPECIFIED_DATE ? "" : nextProps.value, nextProps.time));
   }
 
-  onBlur = (property, value) => {
-    // If one or more of the inputs are not yet set, propagate null...
-    if (lastCompleteDate !== "" && (this.state.month === -1 || this.state.month === -1 || this.state.day === -1)) {
-      this.props.onChange(this.processValue(null));
-    }
+  onBlur = (property, event) => {
+    let nextState = Object.assign(this.state);
+
+    let value = parseInt(event.target.value);
+
+    nextState[property] = value === -1 ? null : value;
+
+    this.setState(nextState, ()=> {
+      // If one or more of the inputs are not yet set, propagate null...
+      if (this.state.year === null || this.state.month === null || this.state.day === null) {
+        this.props.onChange(null);
+      }
+    })
   };
 
   onChange = (property, value) => {
@@ -149,11 +144,7 @@ class EPBCDateWidget extends Component {
       // If we have a complete date (i.e. year, month, day specified), then propagate the
       // value up to the parent form...
       if (isCompleteDate(this.state)) {
-        this.props.onChange(this.processValue(toDateString(this.state, this.props.time)));
-      }
-      // Otherwise, set the date to null if we are starting to modify a previously valid date...
-      else if (lastCompleteDate !== "" && (this.state.year === -1 || this.state.month === -1 || this.state.day === -1)) {
-        this.props.onChange(this.processValue(null));
+        this.props.onChange(toDateString(this.state, this.props.time));
       }
     });
   };
@@ -165,7 +156,7 @@ class EPBCDateWidget extends Component {
       return;
     }
     const nowDateObj = parseDateString(new Date().toJSON(), time);
-    this.setState(nowDateObj, () => onChange(this.processValue(toDateString(this.state, time))));
+    this.setState(nowDateObj, () => onChange(toDateString(this.state, time)));
   };
 
   clear = (event) => {
@@ -174,7 +165,7 @@ class EPBCDateWidget extends Component {
     if (disabled || readonly) {
       return;
     }
-    this.setState(parseDateString("", time), () => onChange(this.processValue(null)));
+    this.setState(parseDateString("", time), () => onChange(null));
   };
 
   get dateElementProps() {
