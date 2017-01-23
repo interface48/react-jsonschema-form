@@ -101,7 +101,7 @@ export default class Form extends Component {
         });
       }        
       let formData = Object.assign({}, this.state.formData);
-      nullifyEmptyRequiredFields(this.props.schema, formData);
+      nullifyEmptyRequiredFields(this.props.schema, this.props.uiSchema, formData);
       setState(this, {formData}, () => {
         const {errors, errorSchema} = this.validate(this.state.formData, false, true);
         if (Object.keys(errors).length > 0) {

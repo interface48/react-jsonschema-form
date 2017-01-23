@@ -15,7 +15,7 @@ function ConsentWidget({
       <label>
         <input type="checkbox"
           id={id}
-          checked={value ? value : null}
+          checked={value}
           disabled={disabled}
           autoFocus={autofocus}
           onChange={(event) => onChange(event.target.checked || null)}/>

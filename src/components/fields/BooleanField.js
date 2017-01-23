@@ -37,7 +37,6 @@ function BooleanField(props) {
       schema.enum.push("");
       schema.enumNames.push("(Not Specified)");
     }
-
     enumOptions = optionsList({
       enum: schema.enum || [true, false, ""],
       enumNames: schema.enumNames || ["Yes", "No", "(Not Specified)"]
@@ -50,34 +49,22 @@ function BooleanField(props) {
       schema.enum.unshift("");
       schema.enumNames.unshift("Select " + schema.title + " ...");
     }
-
     enumOptions = optionsList({
       enum: schema.enum || ["", true, false],
       enumNames: schema.enumNames || ["Select " + schema.title + " ...", "Yes", "No"]
     });
   }
-  // Otherwise, if the widget to be used is a consent checkbox, null is an option, so include
-  // it as the first option...
-  else if (widget === "consent") {
-  }
-  // Otherwise, if the widget to be used is a checkbox or some other field, the value can 
-  // assume the value can only be true or false, and null (i.e. not specified) is not an option...
-  // Below is commented out because if the widget to be used is neither a radio or select widget,
-  // then the options prop is never used.
-  // else {
-  //   enumOptions = optionsList({
-  //     enum: [true, false],
-  //     enumNames: schema.enumNames || ["Yes", "No"]
-  //   });
-  // }
-
+  
   return <Widget
     options={{ ...options, enumOptions }}
     schema={schema}
     id={idSchema && idSchema.$id}
     onChange={(value) => onChange((typeof value !== "boolean") ? null : value)}
     label={title === undefined ? name : title}
-    value={defaultFieldValue(formData, schema)}
+    // Ensure we resolve the consent field to a boolean value, since it is truly expecting
+    // a boolean formData type (i.e. versus the other boolean widgets that support a 
+    // Not Specified option that is represented by the empty string)
+    value={defaultFieldValue(widget === "consent" ? !!formData : formData, schema)}
     required={required}
     disabled={disabled}
     readonly={readonly}

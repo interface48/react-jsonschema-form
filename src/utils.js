@@ -68,15 +68,15 @@ export function defaultFieldValue(formData, schema) {
   return typeof formData === "undefined" ? schema.default : formData;
 }
 
-export function getWidget(schema, widget, registeredWidgets={}) {
+export function getWidget(schema, widget, registeredWidgets = {}) {
   const {type} = schema;
 
   function mergeOptions(Widget) {
     // cache return value as property of widget for proper react reconciliation
     if (!Widget.MergedWidget) {
       const defaultOptions = Widget.defaultProps && Widget.defaultProps.options || {};
-      Widget.MergedWidget = ({options={}, ...props}) =>
-        <Widget options={{...defaultOptions, ...options}} {...props}/>;
+      Widget.MergedWidget = ({options = {}, ...props}) =>
+        <Widget options={{ ...defaultOptions, ...options }} {...props} />;
     }
     return Widget.MergedWidget;
   }
@@ -106,7 +106,7 @@ export function getWidget(schema, widget, registeredWidgets={}) {
   throw new Error(`No widget "${widget}" for type "${type}"`);
 }
 
-function computeDefaults(schema, parentDefaults, definitions={}) {
+function computeDefaults(schema, parentDefaults, definitions = {}) {
   // Compute the defaults recursively: give highest priority to deepest nodes.
   let defaults = parentDefaults;
   if (isObject(defaults) && isObject(schema.default)) {
@@ -127,7 +127,7 @@ function computeDefaults(schema, parentDefaults, definitions={}) {
     defaults = schema.items.map(itemSchema => computeDefaults(itemSchema, undefined, definitions));
   }
   // Not defaults defined for this node, fallback to generic typed ones.
-  if (typeof(defaults) === "undefined") {
+  if (typeof (defaults) === "undefined") {
     defaults = schema.default;
   }
   // We need to recur for object schema inner default values.
@@ -143,7 +143,7 @@ function computeDefaults(schema, parentDefaults, definitions={}) {
   return defaults;
 }
 
-export function getDefaultFormState(_schema, formData, definitions={}, initialize) {
+export function getDefaultFormState(_schema, formData, definitions = {}, initialize) {
   if (!isObject(_schema)) {
     throw new Error("Invalid schema: " + _schema);
   }
@@ -152,7 +152,7 @@ export function getDefaultFormState(_schema, formData, definitions={}, initializ
   if (initialize) {
     initializeFormData(schema, formData);
   }
-  if (typeof(formData) === "undefined") { // No form data? Use schema defaults.
+  if (typeof (formData) === "undefined") { // No form data? Use schema defaults.
     return defaults;
   }
   if (isObject(formData)) { // Override schema defaults with form data.
@@ -162,8 +162,8 @@ export function getDefaultFormState(_schema, formData, definitions={}, initializ
 }
 
 function initializeFormData(schema, formData) {
-  
-    if (schema && formData && typeof formData === "object") {
+
+  if (schema && formData && typeof formData === "object") {
     const keys = Object.keys(formData);
     const requiredFields = schema.required;
     for (let i = 0; i < keys.length; i++) {
@@ -178,18 +178,16 @@ function initializeFormData(schema, formData) {
       }
       // Otherwise, if this is an array
       else if (formDataPropertyType === "array") {
-
-          // and the incoming value is null, then initialize it to an empty arrray...
-          if (formData[formDataPropertyName] === null) {
-            formData[formDataPropertyName] = [];
-          }
-
-          // TODO: Add logic to recursively intitialize array items and any nested arrays
-          // else {
-          //   for (let i = 0; i < formData[formDataPropertyName].length; i++) {
-          //     initializeFormData(schema.properties[formDataPropertyName].items, formData[formDataPropertyName][i]);
-          //   }
-          // }
+        // and the incoming value is null, then initialize it to an empty arrray...
+        if (formData[formDataPropertyName] === null) {
+          formData[formDataPropertyName] = [];
+        }
+        // TODO: Add logic to recursively intitialize array items and any nested arrays
+        // else {
+        //   for (let i = 0; i < formData[formDataPropertyName].length; i++) {
+        //     initializeFormData(schema.properties[formDataPropertyName].items, formData[formDataPropertyName][i]);
+        //   }
+        // }
       }
       // Otherwise, if this is a date or date-time value, and the incoming value is null,
       // then initialize the value to the "(Not Specified)" 0000-01-01 value...
@@ -215,7 +213,7 @@ function initializeFormData(schema, formData) {
   }
 }
 
-export function nullifyEmptyRequiredFields(schema, formData) {
+export function nullifyEmptyRequiredFields(schema, uiSchema, formData) {
   if (schema && formData && typeof formData === "object") {
     const keys = Object.keys(formData);
     const requiredFields = schema.required;
@@ -226,11 +224,10 @@ export function nullifyEmptyRequiredFields(schema, formData) {
       const formDataPropertyFormat = schema.properties[formDataPropertyName] ? schema.properties[formDataPropertyName].format : undefined;
       // If this property is an object, the recursively call nullifyEmptyRequiredFields...
       if (formDataPropertyType === "object") {
-        nullifyEmptyRequiredFields(schema.properties[formDataPropertyName], formData[formDataPropertyName]);
+        nullifyEmptyRequiredFields(schema.properties[formDataPropertyName], uiSchema ? uiSchema[formDataPropertyName] : undefined, formData[formDataPropertyName]);
       }
       // Otherwise, if this is an array...
       else if (formDataPropertyType === "array") {
-
         // And the array is empty, set it to null...
         if (Array.isArray(formDataPropertyValue) && formDataPropertyValue.length === 0) {
           formData[formDataPropertyName] = null;
@@ -239,7 +236,7 @@ export function nullifyEmptyRequiredFields(schema, formData) {
       }
       // Otherwise, if this is a date or date-time value, and the current value is the
       // empty "0000-01-01" value, then set it to null, regardless of whether it's required or not...
-      else if (formDataPropertyType === "string" && ["date", "date-time"].includes(formDataPropertyFormat) 
+      else if (formDataPropertyType === "string" && ["date", "date-time"].includes(formDataPropertyFormat)
         && formDataPropertyValue && formDataPropertyValue.substring(0, Math.min(formData[formDataPropertyName].length, 10)) === "0000-01-01") {
         formData[formDataPropertyName] = null;
       }
@@ -253,8 +250,23 @@ export function nullifyEmptyRequiredFields(schema, formData) {
       }
       // Otherwise if this is a boolean, and the incoming value is null, the initialize
       // it to the empty string, which corresponds to (Not Specified)...
-      else if (formDataPropertyType === "boolean" && formDataPropertyValue === "") {
-        formData[formDataPropertyName] = null;
+      else if (formDataPropertyType === "boolean") {
+        let isConsentField = false;
+        // If there is a uiSchema for this field, they check to see if this boolean field
+        // is backing a consent widget...
+        if (uiSchema) {
+          const {widget} = getUiOptions(uiSchema);
+          isConsentField = widget && widget === "consent";
+        }
+        // If this boolean value is not backing a consent widget, and the current value is
+        // the empty string (i.e. Not Specified), then resolve to null, otherwise, if this
+        // boolean value is backing a consent widget, and the current value is false, then
+        // resolve as null to set a field is required error (i.e. since consent is only
+        // satisfy if the value has been set to true)...     
+        if ((!isConsentField && formDataPropertyValue === "")
+          || (isConsentField && !formDataPropertyValue)) {
+          formData[formDataPropertyName] = null;
+        }
       }
     }
   }
@@ -267,12 +279,12 @@ export function getUiOptions(uiSchema) {
 
     if (key === "ui:widget" && isObject(value)) {
       console.warn("Setting options via ui:widget object is deprecated, use ui:options instead");
-      return {...options, ...(value.options || {}), widget: value.component};
+      return { ...options, ...(value.options || {}), widget: value.component };
     }
     if (key === "ui:options" && isObject(value)) {
-      return {...options, ...value};
+      return { ...options, ...value };
     }
-    return {...options, [key.substring(3)]: value};
+    return { ...options, [key.substring(3)]: value };
   }, {});
 }
 
@@ -283,7 +295,7 @@ export function isObject(thing) {
 export function mergeObjects(obj1, obj2, concatArrays = false) {
   // Recursively merge deeply nested objects.
   var acc = Object.assign({}, obj1); // Prevent mutation of source object.
-  return Object.keys(obj2).reduce((acc, key) =>{
+  return Object.keys(obj2).reduce((acc, key) => {
     const left = obj1[key], right = obj2[key];
     if (obj1.hasOwnProperty(key) && isObject(right)) {
       acc[key] = mergeObjects(left, right, concatArrays);
@@ -369,8 +381,8 @@ export function isFilesArray(schema, uiSchema) {
 
 export function isFixedItems(schema) {
   return Array.isArray(schema.items) &&
-         schema.items.length > 0 &&
-         schema.items.every(item => isObject(item));
+    schema.items.length > 0 &&
+    schema.items.every(item => isObject(item));
 }
 
 export function allowAdditionalItems(schema) {
@@ -383,11 +395,11 @@ export function allowAdditionalItems(schema) {
 export function optionsList(schema) {
   return schema.enum.map((value, i) => {
     const label = schema.enumNames && schema.enumNames[i] || String(value);
-    return {label, value};
+    return { label, value };
   });
 }
 
-function findSchemaDefinition($ref, definitions={}) {
+function findSchemaDefinition($ref, definitions = {}) {
   // Extract and use the referenced definition if we have it.
   const match = /#\/definitions\/(.*)$/.exec($ref);
   if (match && match[1] && definitions.hasOwnProperty(match[1])) {
@@ -397,7 +409,7 @@ function findSchemaDefinition($ref, definitions={}) {
   throw new Error(`Could not find a definition for ${$ref}.`);
 }
 
-export function retrieveSchema(schema, definitions={}) {
+export function retrieveSchema(schema, definitions = {}) {
   // No $ref attribute found, returning the original schema.
   if (!schema.hasOwnProperty("$ref")) {
     return schema;
@@ -407,10 +419,10 @@ export function retrieveSchema(schema, definitions={}) {
   // Drop the $ref property of the source schema.
   const {$ref, ...localSchema} = schema; // eslint-disable-line no-unused-vars
   // Update referenced schema definition with local schema properties.
-  return {...$refSchema, ...localSchema};
+  return { ...$refSchema, ...localSchema };
 }
 
-function isArguments (object) {
+function isArguments(object) {
   return Object.prototype.toString.call(object) === "[object Arguments]";
 }
 
@@ -432,10 +444,10 @@ export function deepEquals(a, b, ca = [], cb = []) {
     return a.getTime() === b.getTime();
   } else if (a instanceof RegExp && b instanceof RegExp) {
     return a.source === b.source &&
-    a.global === b.global &&
-    a.multiline === b.multiline &&
-    a.lastIndex === b.lastIndex &&
-    a.ignoreCase === b.ignoreCase;
+      a.global === b.global &&
+      a.multiline === b.multiline &&
+      a.lastIndex === b.lastIndex &&
+      a.ignoreCase === b.ignoreCase;
   } else if (isArguments(a) || isArguments(b)) {
     if (!(isArguments(a) && isArguments(b))) {
       return false;
@@ -545,9 +557,9 @@ export function toDateString({
   year,
   month,
   day,
-  hour=0,
-  minute=0,
-  second=0
+  hour = 0,
+  minute = 0,
+  second = 0
 }, time = true) {
   const utcTime = Date.UTC(year, month - 1, day, hour, minute, second);
   const datetime = new Date(utcTime).toJSON();
@@ -600,9 +612,9 @@ export function dataURItoBlob(dataURI) {
     array.push(binary.charCodeAt(i));
   }
   // Create the blob object
-  const blob = new window.Blob([new Uint8Array(array)], {type});
+  const blob = new window.Blob([new Uint8Array(array)], { type });
 
-  return {blob, name};
+  return { blob, name };
 }
 
 export function rangeSpec(schema) {
