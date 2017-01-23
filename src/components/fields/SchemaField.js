@@ -62,7 +62,7 @@ function ErrorList(props) {
   }
   else if (errors.length === 1) {
     return (
-      <div className="text-danger" dangerouslySetInnerHTML={{__html: <i className="fa fa-exclamation-triangle" aria-hidden="true"></i> + "&nbsp;" + errors[0]}}></div>
+      <div className="text-danger" dangerouslySetInnerHTML={{__html: "<i className=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>&nbsp;" + errors[0]}}></div>
     );
   }
   return (
