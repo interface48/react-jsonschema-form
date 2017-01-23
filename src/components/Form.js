@@ -94,14 +94,12 @@ export default class Form extends Component {
     this.setState({status: "submitted"});
     let stateErrorsExist = false;
     if (!this.props.noValidate) {
-
       // Trigger any validation of custom fields/widgets that are subscribed
-      if (this.props.formContext["validationHandlers"]) {
+      if (this.props.formContext && this.props.formContext["validationHandlers"]) {
         this.props.formContext["validationHandlers"].forEach((validateHandler) => {
           validateHandler();
         });
-      }
-        
+      }        
       let formData = Object.assign({}, this.state.formData);
       nullifyEmptyRequiredFields(this.props.schema, formData);
       setState(this, {formData}, () => {
