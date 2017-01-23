@@ -1,5 +1,4 @@
 import React, {PropTypes} from "react";
-import renderHTML from "react-render-html";
 
 import {
   isMultiSelect,
@@ -51,7 +50,7 @@ function Help(props) {
     return <div/>;
   }
   if (typeof help === "string") {
-    return <div className="help-block">{renderHTML(help)}</div>;
+    return <div className="help-block" dangerouslySetInnerHTML={{__html: help}}></div>;
   }
   return <div className="help-block">{help}</div>;
 }
@@ -63,7 +62,7 @@ function ErrorList(props) {
   }
   else if (errors.length === 1) {
     return (
-      <div className="text-danger"><i className="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;{renderHTML(errors[0])}</div>
+      <div className="text-danger" dangerouslySetInnerHTML={{__html: <i className="fa fa-exclamation-triangle" aria-hidden="true"></i> + "&nbsp;" + errors[0]}}></div>
     );
   }
   return (
@@ -71,7 +70,7 @@ function ErrorList(props) {
       <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;The following errors exist:
       <ul className="error-detail bs-callout bs-callout-info">{
         errors.map((error, index) => {
-          return <li className="text-danger" key={index}>{renderHTML(error)}</li>;
+          return <li className="text-danger" key={index} dangerouslySetInnerHTML={{__html: error}}></li>;
         })
       }</ul>
     </div>

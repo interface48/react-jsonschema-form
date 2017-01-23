@@ -1,5 +1,4 @@
 import React, {PropTypes} from "react";
-import renderHTML from "react-render-html";
 
 function DescriptionField(props) {
   const {id, description} = props;
@@ -8,7 +7,9 @@ function DescriptionField(props) {
     return <div/>;
   }
   if (typeof description === "string") {
-    return <p id={id} className="field-description">{renderHTML(description)}</p>;
+    // Set HTML-based description using dangerouslySetInnerHTML unless more performant option
+    // becomes available
+    return <p id={id} className="field-description" dangerouslySetInnerHTML={{__html: description}}></p>;
   } else {
     return <div id={id} className="field-description">{description}</div>;
   }
