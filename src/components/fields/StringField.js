@@ -35,7 +35,10 @@ function StringField(props) {
 
   // Otherwise, if the widget to be used is a radio button group, null is an option, so
   // include it as the right-most (or bottom-most) option...
-  if (widget === "radio") {
+  
+  if (widget === "radio"
+    // WORKAROUND: Added RadioButtonGroup for Temporary fix
+    || widget === "RadioButtonGroup") {
     if (schemaEnumIsArray && !isContainsNotSpecifiedOption) {
       schema.enum.push("");
       schema.enumNames.push("(Not Specified)");
