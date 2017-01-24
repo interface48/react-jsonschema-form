@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from "react";
+import React, { Component, PropTypes } from "react";
 
 class BaseInput extends Component {
   static defaultProps = {
@@ -17,7 +17,7 @@ class BaseInput extends Component {
 
   onChange() {
     return (event) => {
-      const value = event.target.value;      
+      const value = event.target.value;
       this.setState({ value: value });
     };
   }
@@ -25,26 +25,39 @@ class BaseInput extends Component {
   onBlur() {
     const {onChange} = this.props;
     return (event) => {
-      const value = event.target.value; 
-        this.setState({ value: value }, () => { 
-            onChange(value);
-        });
+      const value = event.target.value;
+      this.setState({ value: value }, () => {
+        onChange(value);
+      });
     };
   }
+
+  // onKeyPress() {
+  //   const {onChange} = this.props;
+  //   return (event) => {
+  //     // If the enter key was pressed, process as a blur event...
+  //     if (event.which === 13) {
+  //       const value = event.target.value;
+  //       this.setState({ value: value }, () => {
+  //         onChange(value);
+  //       });
+  //     };
+  //   }
+  // }
 
   render() {
     // Note: since React 15.2.0 we can't forward unknown element attributes, so we
     // exclude the "options" and "schema" ones here.
     const {
-        required,
-        readonly,
-        autofocus,
-        onChange,
-        options,  // eslint-disable-line
-        schema,   // eslint-disable-line
-        formContext,  // eslint-disable-line
-        registry,  // eslint-disable-line
-        ...inputProps
+      required,
+      readonly,
+      autofocus,
+      onChange,
+      options,  // eslint-disable-line
+      schema,   // eslint-disable-line
+      formContext,  // eslint-disable-line
+      registry,  // eslint-disable-line
+      ...inputProps
     } = this.props;
     const {
       value
@@ -59,7 +72,7 @@ class BaseInput extends Component {
         maxLength={maxLength}
         value={value == null ? "" : value}
         onChange={this.onChange()}
-        onBlur={this.onBlur()}/>
+        onBlur={this.onBlur()} />
     );
   }
 }

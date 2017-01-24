@@ -91,21 +91,41 @@ export default class Form extends Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.setState({status: "submitted"});
-    let stateErrorsExist = false;
+    this.setState({ status: "submitted" });
+
+    const focusedFormInput = document.activeElement;
+    // If there is a currently focused form input, blur it to trigger its validation
+    // before we check to see if the overall form is valid...
+    if (focusedFormInput != null) {
+      focusedFormInput.blur();
+      setTimeout(function () {
+        focusedFormInput.focus();
+        this.onInnerSubmit();
+      }.bind(this), 100);
+    }
+    else {
+      this.onInnerSubmit();
+    }
+  };
+
+  onInnerSubmit = () => {
     if (!this.props.noValidate) {
       // Trigger any validation of custom fields/widgets that are subscribed
       if (this.props.formContext && this.props.formContext["validationHandlers"]) {
         this.props.formContext["validationHandlers"].forEach((validateHandler) => {
           validateHandler();
         });
-      }        
+      }
+
       let formData = Object.assign({}, this.state.formData);
+      // Convert any default, initial values corresponding to the Not Specified option to
+      // null before running validation
       nullifyEmptyRequiredFields(this.props.schema, this.props.uiSchema, formData);
-      setState(this, {formData}, () => {
+
+      setState(this, { formData }, () => {
         const {errors, errorSchema} = this.validate(this.state.formData, false, true);
         if (Object.keys(errors).length > 0) {
-          setState(this, {errors, errorSchema}, () => {
+          setState(this, { errors, errorSchema }, () => {
             if (this.props.onError) {
               this.props.onError(errors);
             } else {
@@ -114,19 +134,19 @@ export default class Form extends Component {
           });
           return;
         }
-        this.onInnerSubmit(event);        
-      });      
+        this.onInnerInnerSubmit();
+      });
     }
     else {
-      this.onInnerSubmit(event);
+      this.onInnerInnerSubmit();
     }
-  };
+  }
 
-  onInnerSubmit = (event) => {
+  onInnerInnerSubmit = () => {
     if (this.props.onSubmit) {
       this.props.onSubmit(this.state);
     }
-    this.setState({status: "initial", errors: [], errorSchema: {}});
+    this.setState({ status: "initial", errors: [], errorSchema: {} });
   }
 
   getRegistry() {
