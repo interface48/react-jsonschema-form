@@ -1,4 +1,4 @@
 import Form from "./components/Form";
-export { getUiOptions } from "./utils";
+export { getUiOptions, initializeFormData } from "./utils";
 
 export default Form;

@@ -163,7 +163,7 @@ export function getDefaultFormState(_schema, formData, definitions = {}, initial
   return formData || defaults;
 }
 
-function initializeFormData(schema, formData) {
+export function initializeFormData(schema, formData) {
 
   if (schema && formData && typeof formData === "object") {
     const keys = Object.keys(formData);
