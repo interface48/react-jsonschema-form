@@ -89,6 +89,7 @@ function DefaultTemplate(props) {
     hidden,
     required,
     displayLabel,
+    displayDescription
   } = props;
   if (hidden) {
     return children;
@@ -97,7 +98,7 @@ function DefaultTemplate(props) {
   return (
     <div className={classNames}>
       {displayLabel ? <Label label={label} required={required} id={id}/> : null}
-      {displayLabel && description ? description : null}
+      {displayDescription && description ? description : null}
       {children}
       {errors}
       {help}
@@ -121,6 +122,7 @@ if (process.env.NODE_ENV !== "production") {
     required: PropTypes.bool,
     readonly: PropTypes.bool,
     displayLabel: PropTypes.bool,
+    displayDescription: PropTypes.bool,
     fields: PropTypes.object,
     formContext: PropTypes.object,
   };
@@ -131,6 +133,7 @@ DefaultTemplate.defaultProps = {
   readonly: false,
   required: false,
   displayLabel: true,
+  displayDescription: true,
 };
 
 function SchemaField(props) {
@@ -138,7 +141,7 @@ function SchemaField(props) {
   const {definitions, fields, formContext, FieldTemplate = DefaultTemplate} = registry;
   const schema = retrieveSchema(props.schema, definitions);
   const FieldComponent = getFieldComponent(schema, uiSchema, fields);
-  const {DescriptionField} = fields;
+  const {ConsentDescriptionField, DescriptionField} = fields;
   const disabled = Boolean(props.disabled || uiSchema["ui:disabled"]);
   const readonly = Boolean(props.readonly || uiSchema["ui:readonly"]);
   const autofocus = Boolean(props.autofocus || uiSchema["ui:autofocus"]);
@@ -149,23 +152,32 @@ function SchemaField(props) {
   }
 
   let displayLabel = true;
+  let displayDescription = true;
   if (schema.type === "array") {
     displayLabel = isMultiSelect(schema) || isFilesArray(schema, uiSchema);
+    displayDescription = isMultiSelect(schema) || isFilesArray(schema, uiSchema);
   }
   else if (schema.type === "object") {
     displayLabel = false;
+    displayDescription = false;
   }
   // Suppress display of fields labels for checkbox and consent widgets, since they are
   // already included within the checkbox label...
-  else if (schema.type === "boolean" 
-  && (uiSchema["ui:widget"] === "checkbox" || uiSchema["ui:widget"] === "consent")) {
+  else if (schema.type === "boolean" && (uiSchema["ui:widget"] === "checkbox")) {
     displayLabel = false;
+    displayDescription = false;
+  }
+  else if (schema.type === "boolean" && (uiSchema["ui:widget"] === "consent")) {
+    displayLabel = false;
+    displayDescription = true;
   }
   else if (uiSchema["ui:field"]) {
     displayLabel = false;
+    displayDescription = false;
   }
   else if (uiSchema["ui:hideLabel"]) {
     displayLabel = false;
+    displayDescription = false;
   }
 
   const {__errors, ...fieldErrorSchema} = errorSchema;
@@ -195,10 +207,22 @@ function SchemaField(props) {
     uiSchema.classNames,
   ].join(" ").trim();
 
-  const fieldProps = {
-    description: <DescriptionField id={id + "__description"}
+
+  let descriptionField = null;
+
+  if (uiSchema["ui:widget"] === "consent") {
+    descriptionField = <ConsentDescriptionField id={id + "__description"}
                                    description={description}
-                                   formContext={formContext}/>,
+                                   formContext={formContext}/>;
+  }
+  else {
+    descriptionField = <DescriptionField id={id + "__description"}
+                                   description={description}
+                                   formContext={formContext}/>;
+  }
+
+  const fieldProps = {
+    description: descriptionField,
     rawDescription: description,
     help: <Help help={help}/>,
     rawHelp: typeof help === "string" ? help : undefined,
@@ -210,6 +234,7 @@ function SchemaField(props) {
     required,
     readonly,
     displayLabel,
+    displayDescription,
     classNames,
     formContext,
     fields,
