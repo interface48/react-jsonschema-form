@@ -19,7 +19,9 @@ const widgetMap = {
     uri: "URLWidget",
     "data-url": "FileWidget",
     radio: "RadioWidget",
+    RadioButtonGroup: "RadioWidget",  // TO BE REMOVED
     select: "SelectWidget",
+    TextArea: "TextareaWidget",  // TO BE REMOVED
     textarea: "TextareaWidget",
     hidden: "HiddenWidget",
     "date": "DateWidget",
