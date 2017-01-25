@@ -19,9 +19,9 @@ const widgetMap = {
     uri: "URLWidget",
     "data-url": "FileWidget",
     radio: "RadioWidget",
-    RadioButtonGroup: "RadioWidget",  // TO BE REMOVED
+    RadioButtonGroup: "RadioWidget",  // WORKAROUND
     select: "SelectWidget",
-    TextArea: "TextareaWidget",  // TO BE REMOVED
+    TextArea: "TextareaWidget",  // WORKAROUND
     textarea: "TextareaWidget",
     hidden: "HiddenWidget",
     "date": "DateWidget",
@@ -254,10 +254,11 @@ export function nullifyEmptyRequiredFields(schema, uiSchema, formData) {
       // it to the empty string, which corresponds to (Not Specified)...
       else if (formDataPropertyType === "boolean") {
         let isConsentField = false;
-        // If there is a uiSchema for this field, they check to see if this boolean field
+        const formDataPropertyUiSchema = uiSchema[formDataPropertyName]
+        // If there is a uiSchema for this field, then check to see if this boolean field
         // is backing a consent widget...
-        if (uiSchema) {
-          const {widget} = getUiOptions(uiSchema);
+        if (formDataPropertyUiSchema) {
+          const {widget} = getUiOptions(formDataPropertyUiSchema);
           isConsentField = widget && widget === "consent";
         }
         // If this boolean value is not backing a consent widget, and the current value is
