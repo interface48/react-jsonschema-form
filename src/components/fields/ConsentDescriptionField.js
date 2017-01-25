@@ -10,10 +10,10 @@ function ConsentDescriptionField(props) {
     // Set HTML-based description using dangerouslySetInnerHTML unless more performant option
     // becomes available
     if (description.length > 800) {
-      return <div><textarea defaultValue={description} style={{width: "100%", height: "200px"}}></textarea></div>;
+      return <div id={id} className="field-description field-description--scroll" dangerouslySetInnerHTML={{__html: description}}></div>;
     }
     else {
-      return <p id={id} className="field-description" dangerouslySetInnerHTML={{__html: description}}></p>;
+      return <div id={id} className="field-description" dangerouslySetInnerHTML={{__html: description}}></div>;
     }
   } else {
     return <div id={id} className="field-description">{description}</div>;
