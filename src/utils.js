@@ -254,7 +254,7 @@ export function nullifyEmptyRequiredFields(schema, uiSchema, formData) {
       // it to the empty string, which corresponds to (Not Specified)...
       else if (formDataPropertyType === "boolean") {
         let isConsentField = false;
-        const formDataPropertyUiSchema = uiSchema[formDataPropertyName]
+        const formDataPropertyUiSchema = uiSchema ? uiSchema[formDataPropertyName] : undefined;
         // If there is a uiSchema for this field, then check to see if this boolean field
         // is backing a consent widget...
         if (formDataPropertyUiSchema) {
