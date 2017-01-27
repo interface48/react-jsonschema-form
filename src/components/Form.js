@@ -111,8 +111,8 @@ export default class Form extends Component {
   onInnerSubmit = () => {
     if (!this.props.noValidate) {
       // Trigger any validation of custom fields/widgets that are subscribed
-      if (this.props.formContext && this.props.formContext["validationHandlers"]) {
-        this.props.formContext["validationHandlers"].forEach((validateHandler) => {
+      if (this.props.formContext && this.props.formContext.options && this.props.formContext.options.validationHandlers) {
+        this.props.formContext.options.validationHandlers.forEach((validateHandler) => {
           validateHandler();
         });
       }
