@@ -1,4 +1,5 @@
 import React from "react";
+import renderHTML from "react-render-html";
 
 export default function ErrorList({errors}) {
   return (
@@ -9,7 +10,7 @@ export default function ErrorList({errors}) {
       <ul className="list-group">{
         errors.map((error, i) => {
           return (
-            <li key={i} className="list-group-item text-danger" dangerouslySetInnerHTML={{__html: error.stack}}></li>
+            <li key={i} className="list-group-item text-danger">{renderHTML(error.stack)}</li>
           );
         })
       }</ul>

@@ -1,4 +1,5 @@
-import React, {PropTypes} from "react";
+import React, { PropTypes } from "react";
+import renderHTML from "react-render-html";
 
 import {
   isMultiSelect,
@@ -10,12 +11,12 @@ import UnsupportedField from "./UnsupportedField";
 
 const OPTIONAL_FIELD_SYMBOL = "(Optional)";
 const COMPONENT_TYPES = {
-  array:   "ArrayField",
+  array: "ArrayField",
   boolean: "BooleanField",
   integer: "NumberField",
-  number:  "NumberField",
-  object:  "ObjectField",
-  string:  "StringField",
+  number: "NumberField",
+  object: "ObjectField",
+  string: "StringField",
 };
 
 function getFieldComponent(schema, uiSchema, fields) {
@@ -34,7 +35,7 @@ function Label(props) {
   const {label, required, id} = props;
   if (!label) {
     // See #312: Ensure compatibility with old versions of React.
-    return <div/>;
+    return <div />;
   }
   return (
     <label className="control-label" htmlFor={id}>
@@ -47,10 +48,10 @@ function Help(props) {
   const {help} = props;
   if (!help) {
     // See #312: Ensure compatibility with old versions of React.
-    return <div/>;
+    return <div />;
   }
   if (typeof help === "string") {
-    return <div className="help-block" dangerouslySetInnerHTML={{__html: help}}></div>;
+    return <div className="help-block">{renderHTML(help)}</div>;
   }
   return <div className="help-block">{help}</div>;
 }
@@ -58,11 +59,13 @@ function Help(props) {
 function ErrorList(props) {
   const {errors = []} = props;
   if (errors.length === 0) {
-    return <div/>;
+    return <div />;
   }
   else if (errors.length === 1) {
     return (
-      <div className="text-danger" dangerouslySetInnerHTML={{__html: "<i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>&nbsp;" + errors[0]}}></div>
+      <div className="text-danger">
+        {renderHTML("<i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>&nbsp;" + errors[0])}
+      </div>
     );
   }
   return (
@@ -70,7 +73,7 @@ function ErrorList(props) {
       <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;The following errors exist:
       <ul className="error-detail bs-callout bs-callout-info">{
         errors.map((error, index) => {
-          return <li className="text-danger" key={index} dangerouslySetInnerHTML={{__html: error}}></li>;
+          return <li className="text-danger" key={index}>{renderHTML(error)}</li>;
         })
       }</ul>
     </div>
@@ -97,7 +100,7 @@ function DefaultTemplate(props) {
 
   return (
     <div className={classNames}>
-      {displayLabel ? <Label label={label} required={required} id={id}/> : null}
+      {displayLabel ? <Label label={label} required={required} id={id} /> : null}
       {displayDescription && description ? description : null}
       {children}
       {errors}
@@ -141,14 +144,14 @@ function SchemaField(props) {
   const {definitions, fields, formContext, FieldTemplate = DefaultTemplate} = registry;
   const schema = retrieveSchema(props.schema, definitions);
   const FieldComponent = getFieldComponent(schema, uiSchema, fields);
-  const {ConsentDescriptionField, DescriptionField} = fields;
+  const {DescriptionField} = fields;
   const disabled = Boolean(props.disabled || uiSchema["ui:disabled"]);
   const readonly = Boolean(props.readonly || uiSchema["ui:readonly"]);
   const autofocus = Boolean(props.autofocus || uiSchema["ui:autofocus"]);
 
   if (Object.keys(schema).length === 0) {
     // See #312: Ensure compatibility with old versions of React.
-    return <div/>;
+    return <div />;
   }
 
   let displayLabel = true;
@@ -189,7 +192,7 @@ function SchemaField(props) {
       readonly={readonly}
       autofocus={autofocus}
       errorSchema={fieldErrorSchema}
-      formContext={formContext}/>
+      formContext={formContext} />
   );
 
   const {type} = schema;
@@ -206,27 +209,17 @@ function SchemaField(props) {
     errors && errors.length > 0 ? "field-error has-error" : "",
     uiSchema.classNames,
   ].join(" ").trim();
-
-
-  let descriptionField = null;
-
-  if (uiSchema["ui:widget"] === "consent") {
-    descriptionField = <ConsentDescriptionField id={id + "__description"}
-                                   description={description}
-                                   formContext={formContext}/>;
-  }
-  else {
-    descriptionField = <DescriptionField id={id + "__description"}
-                                   description={description}
-                                   formContext={formContext}/>;
-  }
+  const descriptionField = <DescriptionField id={id + "__description"}
+      description={description}
+      formContext={formContext}
+      isScrollable={uiSchema["ui:widget"] === "consent"} />;
 
   const fieldProps = {
     description: descriptionField,
     rawDescription: description,
-    help: <Help help={help}/>,
+    help: <Help help={help} />,
     rawHelp: typeof help === "string" ? help : undefined,
-    errors: <ErrorList errors={errors}/>,
+    errors: <ErrorList errors={errors} />,
     rawErrors: errors,
     id,
     label,

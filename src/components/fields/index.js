@@ -1,7 +1,6 @@
 import ArrayField from "./ArrayField";
 import BooleanField from "./BooleanField";
 import DescriptionField from "./DescriptionField";
-import ConsentDescriptionField from "./ConsentDescriptionField";
 import NumberField from "./NumberField";
 import ObjectField from "./ObjectField";
 import SchemaField from "./SchemaField";
@@ -14,7 +13,6 @@ export default {
   ArrayField,
   BooleanField,
   DescriptionField,
-  ConsentDescriptionField,
   NumberField,
   ObjectField,
   SchemaField,
