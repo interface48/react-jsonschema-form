@@ -40,7 +40,10 @@ module.exports = {
           path.join(__dirname, "node_modules"),
         ],
       },
-      { test: /\.json$/, loader: "json-loader" }
+      { 
+        test: /\.json$/, 
+        loader: "json-loader" 
+      }
     ]
   }
 };
