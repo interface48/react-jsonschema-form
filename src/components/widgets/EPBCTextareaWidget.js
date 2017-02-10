@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from "react";
+import TextareaAutosize from 'react-textarea-autosize';
 
 class TextareaWidget extends Component {
   static defaultProps = {
@@ -43,7 +44,7 @@ class TextareaWidget extends Component {
       value
     } = this.state;
     return (
-      <textarea
+      <TextareaAutosize
         id={id}
         className="form-control"
         value={value ? value : ""}
