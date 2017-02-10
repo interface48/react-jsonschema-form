@@ -17,7 +17,7 @@ function DescriptionField(props) {
         padding: "10px"
       };
     }
-    return <div id={id} className="field-description" style={descriptionStyle}>{renderHTML(description)}</div>;
+    return <div id={id} className={"field-description" + (descriptionStyle ? " field-description--scrollable" : "")} style={descriptionStyle}>{renderHTML(description)}</div>;
   } 
   else {
     return <div id={id} className="field-description">{description}</div>;
