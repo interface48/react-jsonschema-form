@@ -16,6 +16,7 @@ function DateWidget(props) {
 if (process.env.NODE_ENV !== "production") {
   DateWidget.propTypes = {
     value: PropTypes.string,
+    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string),
   };
 }
 

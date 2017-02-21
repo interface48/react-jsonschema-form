@@ -16,7 +16,7 @@ function readyForChange(state) {
 }
 
 function DateElement(props) {
-  const {type, range, value, select, rootId, disabled, readonly, autofocus, registry} = props;
+  const {type, range, value, select, rootId, disabled, readonly, autofocus, ariaDescribedByFields, registry} = props;
   const id = rootId + "_" + type;
   const {SelectWidget} = registry.widgets;
   return (
@@ -29,6 +29,7 @@ function DateElement(props) {
       disabled={disabled}
       readonly={readonly}
       autofocus={autofocus}
+      aria-describedby={ariaDescribedByFields}
       onChange={(value) => select(type, value)}/>
   );
 }
@@ -139,6 +140,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
+    ariaDescribedByFields: PropTypes.string,
     onChange: PropTypes.func,
     time: PropTypes.bool,
   };

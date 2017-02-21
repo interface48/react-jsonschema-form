@@ -15,7 +15,7 @@ function deselectValue(value, selected) {
 }
 
 function CheckboxesWidget(props) {
-  const {id, disabled, options, value, autofocus, onChange} = props;
+  const {id, disabled, options, value, autofocus, ariaDescribedByFields, onChange} = props;
   const {enumOptions, inline} = options;
   return (
     <div className="checkboxes" id={id}>{
@@ -29,6 +29,7 @@ function CheckboxesWidget(props) {
               checked={checked}
               disabled={disabled}
               autoFocus={autofocus && index === 0}
+              aria-describedby={ariaDescribedByFields}
               onChange={(event) => {
                 const all = enumOptions.map(({value}) => value);
                 if (event.target.checked) {
@@ -76,6 +77,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     multiple: PropTypes.bool,
     autofocus: PropTypes.bool,
+    ariaDescribedByFields: PropTypes.string,
     onChange: PropTypes.func,
   };
 }

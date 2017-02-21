@@ -8,6 +8,7 @@ function CheckboxWidget({
   disabled,
   label,
   autofocus,
+  ariaDescribedByFields,
   onChange,
 }) {
   return (
@@ -18,7 +19,8 @@ function CheckboxWidget({
           checked={value ? value : false}
           disabled={disabled}
           autoFocus={autofocus}
-          onChange={(event) => onChange(event.target.checked)}/>
+          onChange={(event) => onChange(event.target.checked)}
+          aria-describedby={ariaDescribedByFields}/>
         <span>{label}</span>
       </label>
     </div>
@@ -36,7 +38,8 @@ if (process.env.NODE_ENV !== "production") {
     value: PropTypes.bool,
     required: PropTypes.bool,
     autofocus: PropTypes.bool,
-    onChange: PropTypes.func,
+    ariaDescribedByFields: PropTypes.string,
+    onChange: PropTypes.func
   };
 }
 

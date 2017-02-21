@@ -13,6 +13,7 @@ if (process.env.NODE_ENV !== "production") {
       PropTypes.number,
       PropTypes.string,
     ]),
+    ariaDescribedByFields: PropTypes.string,
   };
 }
 

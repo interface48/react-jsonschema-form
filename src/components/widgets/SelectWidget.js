@@ -28,6 +28,7 @@ function SelectWidget({
   readonly,
   multiple,
   autofocus,
+  ariaDescribedByFields,
   onChange
 }) {
   const {enumOptions} = options;
@@ -41,6 +42,7 @@ function SelectWidget({
       disabled={disabled}
       readOnly={readonly}
       autoFocus={autofocus}
+      aria-describedby={ariaDescribedByFields}
       onChange={(event) => {
         let newValue;
         if (multiple) {
@@ -73,6 +75,7 @@ if (process.env.NODE_ENV !== "production") {
     required: PropTypes.bool,
     multiple: PropTypes.bool,
     autofocus: PropTypes.bool,
+    ariaDescribedByFields: PropTypes.string,
     onChange: PropTypes.func,
   };
 }

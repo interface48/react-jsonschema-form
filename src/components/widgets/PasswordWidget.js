@@ -10,6 +10,7 @@ function PasswordWidget(props) {
 if (process.env.NODE_ENV !== "production") {
   PasswordWidget.propTypes = {
     value: PropTypes.string,
+    ariaDescribedByFields: PropTypes.string,
   };
 }
 

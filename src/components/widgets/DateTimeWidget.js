@@ -14,12 +14,13 @@ function toJSONDate(dateString) {
 }
 
 function DateTimeWidget(props) {
-  const {value, onChange} = props;
+  const {value, ariaDescribedByFields, onChange} = props;
   return (
     <BaseInput
       type="datetime-local"
       {...props}
       value={fromJSONDate(value)}
+      ariaDescribedByFields={ariaDescribedByFields}
       onChange={(value) => onChange(toJSONDate(value))}/>
   );
 }
@@ -27,6 +28,7 @@ function DateTimeWidget(props) {
 if (process.env.NODE_ENV !== "production") {
   DateTimeWidget.propTypes = {
     value: PropTypes.string,
+    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string),
   };
 }
 

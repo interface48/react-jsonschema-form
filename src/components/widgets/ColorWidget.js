@@ -10,6 +10,7 @@ function ColorWidget(props) {
 if (process.env.NODE_ENV !== "production") {
   ColorWidget.propTypes = {
     value: PropTypes.string,
+    ariaDescribedByFields: PropTypes.string
   };
 }
 

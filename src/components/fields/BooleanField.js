@@ -20,6 +20,7 @@ function BooleanField(props) {
     disabled,
     readonly,
     autofocus,
+    ariaDescribedByFields,
     onChange
   } = props;
   const {title} = schema;
@@ -72,7 +73,8 @@ function BooleanField(props) {
     readonly={readonly}
     registry={registry}
     formContext={formContext}
-    autofocus={autofocus} />;
+    autofocus={autofocus}
+    ariaDescribedByFields={ariaDescribedByFields ? ariaDescribedByFields.join(" ") : null} />;
 }
 
 if (process.env.NODE_ENV !== "production") {
@@ -86,6 +88,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
+    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string),
     registry: PropTypes.shape({
       widgets: PropTypes.objectOf(PropTypes.oneOfType([
         PropTypes.func,

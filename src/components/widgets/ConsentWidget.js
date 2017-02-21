@@ -8,6 +8,7 @@ function ConsentWidget({
   disabled,
   label,
   autofocus,
+  ariaDescribedByFields,
   onChange,
 }) {
   return (
@@ -18,6 +19,7 @@ function ConsentWidget({
           checked={value}
           disabled={disabled}
           autoFocus={autofocus}
+          aria-describedby={ariaDescribedByFields}
           onChange={(event) => onChange(event.target.checked || null)}/>
         <span>{label}</span>
       </label>
@@ -36,6 +38,7 @@ if (process.env.NODE_ENV !== "production") {
     value: PropTypes.bool,
     required: PropTypes.bool,
     autofocus: PropTypes.bool,
+    ariaDescribedByFields: PropTypes.string,
     onChange: PropTypes.func,
   };
 }

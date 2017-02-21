@@ -51,7 +51,7 @@ class ArrayField extends Component {
     required: false,
     disabled: false,
     readonly: false,
-    autofocus: false,
+    autofocus: false
   };
 
   constructor(props) {
@@ -173,6 +173,7 @@ class ArrayField extends Component {
       disabled,
       readonly,
       autofocus,
+      ariaDescribedByFields
     } = this.props;
     const title = (schema.title === undefined) ? name : schema.title;
     const {items} = this.state;
@@ -208,7 +209,8 @@ class ArrayField extends Component {
               itemErrorSchema,
               itemData: items[index],
               itemUiSchema: uiSchema.items,
-              autofocus: autofocus && index === 0
+              autofocus: autofocus && index === 0,
+              ariaDescribedByFields: ariaDescribedByFields
             });
           })
         }</div>
@@ -220,7 +222,7 @@ class ArrayField extends Component {
   }
 
   renderMultiSelect() {
-    const {schema, idSchema, uiSchema, disabled, readonly, autofocus} = this.props;
+    const {schema, idSchema, uiSchema, disabled, readonly, autofocus, ariaDescribedByFields} = this.props;
     const {items} = this.state;
     const {widgets, definitions} = this.props.registry;
     const itemsSchema = retrieveSchema(schema.items, definitions);
@@ -237,12 +239,13 @@ class ArrayField extends Component {
         value={items}
         disabled={disabled}
         readonly={readonly}
-        autofocus={autofocus}/>
+        autofocus={autofocus}
+        ariaDescribedByFields={ariaDescribedByFields ? ariaDescribedByFields.join(" ") : null} />
     );
   }
 
   renderFiles() {
-    const {schema, uiSchema, idSchema, name, disabled, readonly, autofocus} = this.props;
+    const {schema, uiSchema, idSchema, name, disabled, readonly, autofocus, ariaDescribedByFields} = this.props;
     const title = schema.title || name;
     const {items} = this.state;
     const {widgets} = this.props.registry;
@@ -259,7 +262,8 @@ class ArrayField extends Component {
         value={items}
         disabled={disabled}
         readonly={readonly}
-        autofocus={autofocus}/>
+        autofocus={autofocus}
+        ariaDescribedByFields={ariaDescribedByFields}/>
     );
   }
 
@@ -274,6 +278,7 @@ class ArrayField extends Component {
       disabled,
       readonly,
       autofocus,
+      ariaDescribedByFields
     } = this.props;
     const title = schema.title || name;
     let {items} = this.state;
@@ -324,7 +329,8 @@ class ArrayField extends Component {
               itemUiSchema,
               itemIdSchema,
               itemErrorSchema,
-              autofocus: autofocus && index === 0
+              autofocus: autofocus && index === 0,
+              ariaDescribedByFields: ariaDescribedByFields
             });
           })
         }</div>
@@ -347,7 +353,8 @@ class ArrayField extends Component {
     itemUiSchema,
     itemIdSchema,
     itemErrorSchema,
-    autofocus
+    autofocus,
+    ariaDescribedByFields
   }) {
     const {SchemaField} = this.props.registry.fields;
     const {disabled, readonly, uiSchema} = this.props;
@@ -378,7 +385,8 @@ class ArrayField extends Component {
             registry={this.props.registry}
             disabled={this.props.disabled}
             readonly={this.props.readonly}
-            autofocus={autofocus}/>
+            autofocus={autofocus}
+            ariaDescribedByFields={ariaDescribedByFields}/>
         </div>
         {
           has.toolbar ?
@@ -444,6 +452,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
+    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string),
     registry: PropTypes.shape({
       widgets: PropTypes.objectOf(PropTypes.oneOfType([
         PropTypes.func,

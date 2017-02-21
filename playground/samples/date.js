@@ -49,7 +49,8 @@ module.exports = {
           },
           "enableNow": true,
           "enableClear": true
-        }
+        },
+        "ui:help": "Pick a date"
       }
     },
     alternative: {

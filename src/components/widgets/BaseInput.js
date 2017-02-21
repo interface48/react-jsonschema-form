@@ -8,6 +8,7 @@ function BaseInput(props) {
     value,
     readonly,
     autofocus,
+    ariaDescribedByFields,
     onChange,
     options,  // eslint-disable-line
     schema,   // eslint-disable-line
@@ -21,6 +22,7 @@ function BaseInput(props) {
       className="form-control"
       readOnly={readonly}
       autoFocus={autofocus}
+      aria-describedby={ariaDescribedByFields}
       value={typeof value === "undefined" ? "" : value}
       onChange={(event) => onChange(event.target.value)}/>
   );
@@ -43,6 +45,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
+    ariaDescribedByFields: PropTypes.string,
     onChange: PropTypes.func,
   };
 }

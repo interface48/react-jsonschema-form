@@ -3,7 +3,7 @@ module.exports = {
     title: "A registration form",
     description: "A simple form example.",
     type: "object",
-    required: ["lastName", "booleanRadio", "booleanConsent"],
+    required: ["lastName", "booleanRadio", "stringSelectEnum", "numberSelectEnum", "booleanConsent", "booleanRadioWithEnum", "numberRadioEnum"],
     properties: {
       firstName: {
         type: "string",
@@ -129,13 +129,16 @@ module.exports = {
   },
   uiSchema: {
     firstName: {
-      "ui:autofocus": true
+      "ui:autofocus": true,
+      "ui:help": "Help!"
     },
     age: {
-      "ui:widget": "updown"
+      "ui:widget": "updown",
+      "ui:help": "Help, I'm getting old!"
     },
     bio: {
-      "ui:widget": "textarea"
+      "ui:widget": "textarea",
+      "ui:help": "Help!"
     },
     password: {
       "ui:widget": "password",
@@ -144,37 +147,47 @@ module.exports = {
     booleanRadio: {
       "ui:options": {
         inline: true
-      }
+      },
+      "ui:help": "Help radio!"
     },
     booleanRadioWithEnum: {
       "ui:widget": "radio",
       "ui:options": {
         inline: true
-      }
+      },
+      "ui:help": "Help!"
     },
     booleanSelect: {
-      "ui:widget": "select"
+      "ui:widget": "select",
+      "ui:help": "Help select!"
     },
     booleanSelectWithEnum: {
-      "ui:widget": "select"
+      "ui:widget": "select",
+      "ui:help": "Help booleanSelectWithEnum!"
     },
     booleanCheckbox: {
-      "ui:widget": "checkbox"
+      "ui:widget": "checkbox",
+      "ui:help": "Just click the box!"
     },
     booleanConsent: {
-      "ui:widget": "consent"
+      "ui:widget": "consent",
+      "ui:help": "Please read the disclaimer!"
     },
     stringSelectEnum: {
-      "ui:widget": "select"
+      "ui:widget": "select",
+      "ui:help": "Help stringSelectEnum!"
     },
     stringRadioEnum: {
-      "ui:widget": "radio"
+      "ui:widget": "radio",
+      "ui:help": "Help stringRadioEnum!"
     },
     numberSelectEnum: {
-      "ui:widget": "select"
+      "ui:widget": "select",
+      "ui:help": "Help numberSelectEnum!"
     },
     numberRadioEnum: {
-      "ui:widget": "radio"
+      "ui:widget": "radio",
+      "ui:help": "Help numberRadioEnum!"
     },
     date: {
       "ui:widget": "alt-datetime"

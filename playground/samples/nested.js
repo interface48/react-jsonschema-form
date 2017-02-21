@@ -13,7 +13,7 @@ module.exports = {
         title: "Tasks",
         items: {
           type: "object",
-          required: ["title"],
+          required: ["title", "details"],
           properties: {
             title: {
               type: "string",

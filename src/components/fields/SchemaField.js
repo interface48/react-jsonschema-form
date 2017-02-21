@@ -45,31 +45,32 @@ function Label(props) {
 }
 
 function Help(props) {
-  const {help} = props;
+  const {fieldId, help} = props;
   if (!help) {
     // See #312: Ensure compatibility with old versions of React.
     return <div />;
   }
   if (typeof help === "string") {
-    return <div className="help-block">{renderHTML(help)}</div>;
+    return <div id={fieldId + "-help"} className="help-block">{renderHTML(help)}</div>;
   }
   return <div className="help-block">{help}</div>;
 }
 
 function ErrorList(props) {
-  const {errors = []} = props;
+  
+  const {fieldId, errors = []} = props;
   if (errors.length === 0) {
     return <div />;
   }
   else if (errors.length === 1) {
     return (
-      <div className="text-danger">
+      <div id={fieldId + "-error"} className="text-danger">
         {renderHTML("<i class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>&nbsp;" + errors[0])}
       </div>
     );
   }
   return (
-    <div className="text-danger">
+    <div id={fieldId + "-error"} className="text-danger">
       <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;The following errors exist:
       <ul className="error-detail bs-callout bs-callout-info">{
         errors.map((error, index) => {
@@ -149,6 +150,24 @@ function SchemaField(props) {
   const readonly = Boolean(props.readonly || uiSchema["ui:readonly"]);
   const autofocus = Boolean(props.autofocus || uiSchema["ui:autofocus"]);
 
+  const {__errors, ...fieldErrorSchema} = errorSchema;
+  const errors = __errors;
+  const help = uiSchema["ui:help"];
+
+  let ariaDescribedByFields = [];
+
+  if (errors && errors.length > 0) {
+    ariaDescribedByFields.push(idSchema.$id + "-error");
+  }
+
+  if (help) {
+    ariaDescribedByFields.push(idSchema.$id + "-help");
+  }
+
+  if (ariaDescribedByFields.length < 0 ) {
+    ariaDescribedByFields = null;
+  }
+
   if (Object.keys(schema).length === 0) {
     // See #312: Ensure compatibility with old versions of React.
     return <div />;
@@ -183,7 +202,7 @@ function SchemaField(props) {
     displayDescription = false;
   }
 
-  const {__errors, ...fieldErrorSchema} = errorSchema;
+  
 
   const field = (
     <FieldComponent {...props}
@@ -191,6 +210,7 @@ function SchemaField(props) {
       disabled={disabled}
       readonly={readonly}
       autofocus={autofocus}
+      ariaDescribedByFields={ariaDescribedByFields}
       errorSchema={fieldErrorSchema}
       formContext={formContext} />
   );
@@ -199,8 +219,6 @@ function SchemaField(props) {
   const id = idSchema.$id;
   const label = props.schema.title || schema.title || name;
   const description = props.schema.description || schema.description;
-  const errors = __errors;
-  const help = uiSchema["ui:help"];
   const hidden = uiSchema["ui:widget"] === "hidden";
   const classNames = [
     "form-group",
@@ -214,12 +232,14 @@ function SchemaField(props) {
       formContext={formContext}
       isScrollable={uiSchema["ui:widget"] === "consent"} />;
 
+
+
   const fieldProps = {
     description: descriptionField,
     rawDescription: description,
-    help: <Help help={help} />,
+    help: <Help fieldId={id} help={help} />,
     rawHelp: typeof help === "string" ? help : undefined,
-    errors: <ErrorList errors={errors} />,
+    errors: <ErrorList fieldId={id} errors={errors} />,
     rawErrors: errors,
     id,
     label,
@@ -264,7 +284,11 @@ if (process.env.NODE_ENV !== "production") {
       definitions: PropTypes.object.isRequired,
       FieldTemplate: PropTypes.func,
       formContext: PropTypes.object.isRequired,
-    })
+    }),
+    disabled: PropTypes.bool,
+    readonly: PropTypes.bool,
+    autofocus: PropTypes.bool,
+    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string)
   };
 }
 

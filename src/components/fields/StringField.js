@@ -19,6 +19,7 @@ function StringField(props) {
     disabled,
     readonly,
     autofocus,
+    ariaDescribedByFields,
     registry,
     onChange
   } = props;
@@ -79,6 +80,7 @@ function StringField(props) {
     readonly={readonly}
     formContext={formContext}
     autofocus={autofocus}
+    ariaDescribedByFields={ariaDescribedByFields ? ariaDescribedByFields.join(" ") : null}
     registry={registry}
     placeholder={placeholder}/>;
 }
@@ -107,6 +109,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
+    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string)
   };
 }
 
