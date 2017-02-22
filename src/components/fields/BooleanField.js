@@ -74,7 +74,7 @@ function BooleanField(props) {
     registry={registry}
     formContext={formContext}
     autofocus={autofocus}
-    ariaDescribedByFields={ariaDescribedByFields ? ariaDescribedByFields.join(" ") : null} />;
+    ariaDescribedByFields={ariaDescribedByFields && ariaDescribedByFields.length > 0 ? ariaDescribedByFields.join(" ") : null} />;
 }
 
 if (process.env.NODE_ENV !== "production") {

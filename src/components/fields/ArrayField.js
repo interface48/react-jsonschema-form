@@ -240,7 +240,7 @@ class ArrayField extends Component {
         disabled={disabled}
         readonly={readonly}
         autofocus={autofocus}
-        ariaDescribedByFields={ariaDescribedByFields ? ariaDescribedByFields.join(" ") : null} />
+        ariaDescribedByFields={ariaDescribedByFields && ariaDescribedByFields.length > 0 ? ariaDescribedByFields.join(" ") : null} />
     );
   }
 
@@ -263,7 +263,7 @@ class ArrayField extends Component {
         disabled={disabled}
         readonly={readonly}
         autofocus={autofocus}
-        ariaDescribedByFields={ariaDescribedByFields}/>
+        ariaDescribedByFields={ariaDescribedByFields && ariaDescribedByFields.length > 0 ? ariaDescribedByFields.join(" ") : null}/>
     );
   }
 

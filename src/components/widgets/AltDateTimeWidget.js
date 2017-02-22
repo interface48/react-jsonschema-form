@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== "production") {
     id: PropTypes.string.isRequired,
     value: React.PropTypes.string,
     required: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string),
+    ariaDescribedByFields: PropTypes.string,
     onChange: PropTypes.func,
   };
 }

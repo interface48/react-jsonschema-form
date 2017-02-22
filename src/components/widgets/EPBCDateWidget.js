@@ -21,7 +21,7 @@ const DateElement = (props) => {
       disabled={disabled}
       readonly={readonly}
       autofocus={autofocus}
-      ariaDescribedByFields={ariaDescribedByFields ? ariaDescribedByFields.join(" ") : null}
+      ariaDescribedByFields={ariaDescribedByFields}
       onBlur={(value) => onBlur(type, value)}
       onChange={(value) => select(type, value)} />
   );
@@ -239,7 +239,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string),
+    ariaDescribedByFields: PropTypes.string,
     options: PropTypes.shape({
       yearRange: PropTypes.shape(
         {

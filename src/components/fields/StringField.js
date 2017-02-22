@@ -41,8 +41,22 @@ function StringField(props) {
     // WORKAROUND: Added RadioButtonGroup for Temporary fix
     || widget === "RadioButtonGroup") {
     if (schemaEnumIsArray && !isContainsNotSpecifiedOption) {
+      if (schema.enumNames) {
+        schema.enumNames.push("(Not Specified)");
+      }
+      // If there are no enumNames, then build it out using enum values
+      else {
+        schema.enumNames = [];
+
+        schema.enum.forEach((e) => {
+          schema.enumNames.push("" + e);
+        });
+
+        schema.enumNames.push("(Not Specified)");
+      }
+
+      // Add the (Not Specified) value last
       schema.enum.push("");
-      schema.enumNames.push("(Not Specified)");
     }
 
     enumOptions = schemaEnumIsArray && optionsList({
@@ -80,7 +94,7 @@ function StringField(props) {
     readonly={readonly}
     formContext={formContext}
     autofocus={autofocus}
-    ariaDescribedByFields={ariaDescribedByFields ? ariaDescribedByFields.join(" ") : null}
+    ariaDescribedByFields={ariaDescribedByFields && ariaDescribedByFields.length > 0 ? ariaDescribedByFields.join(" ") : null}
     registry={registry}
     placeholder={placeholder}/>;
 }
