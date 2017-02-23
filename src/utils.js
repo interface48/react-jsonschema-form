@@ -3,6 +3,7 @@ import "setimmediate";
 
 const widgetMap = {
   boolean: {
+    display: "DisplayWidget",
     checkbox: "CheckboxWidget",
     consent: "ConsentWidget",
     radio: "RadioWidget",
@@ -10,6 +11,7 @@ const widgetMap = {
     hidden: "HiddenWidget",
   },
   string: {
+    display: "DisplayWidget",
     text: "TextWidget",
     password: "PasswordWidget",
     email: "EmailWidget",
@@ -33,6 +35,7 @@ const widgetMap = {
     file: "FileWidget",
   },
   number: {
+    display: "DisplayWidget",
     text: "TextWidget",
     select: "SelectWidget",
     updown: "UpDownWidget",
@@ -41,6 +44,7 @@ const widgetMap = {
     hidden: "HiddenWidget",
   },
   integer: {
+    display: "DisplayWidget",
     text: "TextWidget",
     select: "SelectWidget",
     updown: "UpDownWidget",

@@ -6,6 +6,7 @@ import ConsentWidget from "./ConsentWidget";
 import ColorWidget from "./ColorWidget";
 import DateWidget from "./EPBCDateWidget";
 import DateTimeWidget from "./DateTimeWidget";
+import DisplayWidget from "./DisplayWidget";
 import EmailWidget from "./EmailWidget";
 import FileWidget from "./FileWidget";
 import HiddenWidget from "./HiddenWidget";
@@ -28,6 +29,7 @@ export default {
   TextWidget,
   DateWidget,
   DateTimeWidget,
+  DisplayWidget,
   AltDateWidget,
   AltDateTimeWidget,
   EmailWidget,
