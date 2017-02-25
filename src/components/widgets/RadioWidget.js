@@ -20,28 +20,28 @@ function RadioWidget({
       enumOptions.map((option, i) => {
         const checked = option.value === (value == null ? "" : value);
         const disabledCls = disabled ? "disabled" : "";
-        const radio = (
-          <span>
-            <input type="radio"
-              checked={checked}
-              name={name}
-              value={option.value}
-              disabled={disabled}
-              autoFocus={autofocus && i === 0}
-              aria-describedby={ariaDescribedByFields}
-              onChange={_ => onChange(option.value)}/>
-            <span>{option.label}</span>
-          </span>
+        const radioInput = (
+          <input type="radio"
+            checked={checked}
+            name={name}
+            value={option.value}
+            disabled={disabled}
+            autoFocus={autofocus && i === 0}
+            aria-describedby={ariaDescribedByFields}
+            onChange={_ => onChange(option.value)}/>
         );
+        const radioOptionLabel = option.label;
 
         return inline ? (
           <label key={i} className={`radio-inline ${disabledCls}`}>
-            {radio}
+            {radioInput}
+            {radioOptionLabel}
           </label>
         ) : (
           <div key={i} className={`radio ${disabledCls}`}>
             <label>
-              {radio}
+              {radioInput}
+              {radioOptionLabel}
             </label>
           </div>
         );
