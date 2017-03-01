@@ -399,6 +399,13 @@ export function allowAdditionalItems(schema) {
   return isObject(schema.additionalItems);
 }
 
+export function getNotSpecifiedOption() {
+  return {
+    value: "",
+    label: "(Not Specified)"
+  };
+}
+
 export function optionsList(schema) {
   return schema.enum.map((value, i) => {
     const label = schema.enumNames && schema.enumNames[i] || String(value);
