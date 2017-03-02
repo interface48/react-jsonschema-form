@@ -3,9 +3,7 @@ import React, { PropTypes } from "react";
 function DisplayWidget(props) {
   const {id, value, schema} = props;
 
-  return (
-    <p id={id} className="form-control-static">{value}</p>
-  );
+  return value ? <p id={id} className="form-control-static">{value}</p> : null;
 }
 
 export default DisplayWidget;

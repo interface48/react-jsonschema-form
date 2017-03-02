@@ -237,7 +237,7 @@ function SchemaField(props) {
     id,
     label,
     hidden,
-    required,
+    required: schema.format === "display" || required,
     readonly,
     displayLabel,
     displayDescription,
