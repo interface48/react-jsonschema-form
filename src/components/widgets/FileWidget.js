@@ -1,7 +1,5 @@
 import React, {Component, PropTypes} from "react";
-
 import {dataURItoBlob, shouldRender, setState} from "../../utils";
-
 
 function addNameToDataURL(dataURL, name) {
   return dataURL.replace(";base64", `;name=${name};base64`);
@@ -94,7 +92,7 @@ class FileWidget extends Component {
   };
 
   render() {
-    const {multiple, id, readonly, disabled, autofocus, ariaDescribedByFields} = this.props;
+    const {multiple, id, readonly, disabled, autofocus, ariaDescribedBy} = this.props;
     const {filesInfo} = this.state;
     return (
       <div>
@@ -107,7 +105,7 @@ class FileWidget extends Component {
             onChange={this.onChange}
             defaultValue=""
             autoFocus={autofocus}
-            aria-describedby={ariaDescribedByFields}
+            aria-describedby={ariaDescribedBy}
             multiple={multiple}/>
         </p>
         <FilesInfo filesInfo={filesInfo}/>
@@ -128,7 +126,7 @@ if (process.env.NODE_ENV !== "production") {
       PropTypes.arrayOf(PropTypes.string)
     ]),
     autofocus: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.string
+    ariaDescribedBy: PropTypes.string
   };
 }
 

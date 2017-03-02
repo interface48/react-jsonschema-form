@@ -1,5 +1,4 @@
 import React, {PropTypes} from "react";
-
 import {rangeSpec} from "../../utils";
 import BaseInput from "./EPBCBaseInput";
 
@@ -22,7 +21,7 @@ if (process.env.NODE_ENV !== "production") {
       PropTypes.string,
       PropTypes.number,
     ]),
-    ariaDescribedByFields: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
   };
 }
 

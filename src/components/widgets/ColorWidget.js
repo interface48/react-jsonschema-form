@@ -1,7 +1,5 @@
 import React, {PropTypes} from "react";
-
 import BaseInput from "./EPBCBaseInput";
-
 
 function ColorWidget(props) {
   return <BaseInput type="color" {...props}/>;
@@ -10,7 +8,7 @@ function ColorWidget(props) {
 if (process.env.NODE_ENV !== "production") {
   ColorWidget.propTypes = {
     value: PropTypes.string,
-    ariaDescribedByFields: PropTypes.string
+    ariaDescribedBy: PropTypes.string
   };
 }
 

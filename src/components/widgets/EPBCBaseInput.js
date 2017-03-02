@@ -52,7 +52,7 @@ class BaseInput extends Component {
       required,
       readonly,
       autofocus,
-      ariaDescribedByFields,
+      ariaDescribedBy,
       onChange,
       options,  // eslint-disable-line
       schema,   // eslint-disable-line
@@ -70,7 +70,7 @@ class BaseInput extends Component {
         className="form-control"
         readOnly={readonly}
         autoFocus={autofocus}
-        aria-describedby={ariaDescribedByFields}
+        aria-describedby={ariaDescribedBy}
         maxLength={maxLength}
         value={value == null ? "" : value}
         onChange={this.onChange()}
@@ -88,7 +88,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
     onChange: PropTypes.func,
   };
 }

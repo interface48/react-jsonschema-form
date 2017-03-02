@@ -1,6 +1,5 @@
 import React, {PropTypes} from "react";
 
-
 function ConsentWidget({
   schema,
   id,
@@ -8,7 +7,7 @@ function ConsentWidget({
   disabled,
   label,
   autofocus,
-  ariaDescribedByFields,
+  ariaDescribedBy,
   onChange,
 }) {
   return (
@@ -19,7 +18,7 @@ function ConsentWidget({
           checked={value}
           disabled={disabled}
           autoFocus={autofocus}
-          aria-describedby={ariaDescribedByFields}
+          aria-describedby={ariaDescribedBy}
           onChange={(event) => onChange(event.target.checked || null)}/>
         <span>{label}</span>
       </label>
@@ -38,7 +37,7 @@ if (process.env.NODE_ENV !== "production") {
     value: PropTypes.bool,
     required: PropTypes.bool,
     autofocus: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
     onChange: PropTypes.func,
   };
 }

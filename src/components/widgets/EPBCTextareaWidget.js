@@ -38,7 +38,7 @@ class TextareaWidget extends Component {
       disabled,
       readonly,
       autofocus,
-      ariaDescribedByFields,
+      ariaDescribedBy,
       onChange
     } = this.props;    
     const {
@@ -53,7 +53,7 @@ class TextareaWidget extends Component {
         disabled={disabled}
         readOnly={readonly}
         autoFocus={autofocus}
-        aria-describedby={ariaDescribedByFields}
+        aria-describedby={ariaDescribedBy}
         onChange={this.onChange()}
         onBlur={this.onBlur()}/>
     );
@@ -68,7 +68,7 @@ if (process.env.NODE_ENV !== "production") {
     value: PropTypes.string,
     required: PropTypes.bool,
     autofocus: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
     onChange: PropTypes.func,
   };
 }

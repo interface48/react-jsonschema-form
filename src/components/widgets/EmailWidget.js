@@ -1,7 +1,5 @@
 import React, {PropTypes} from "react";
-
-import BaseInput from "./EPBCBaseInput";
-
+import BaseInput from "./EPBCBaseInput"
 
 function EmailWidget(props) {
   return <BaseInput type="email" {...props}/>;
@@ -10,7 +8,7 @@ function EmailWidget(props) {
 if (process.env.NODE_ENV !== "production") {
   EmailWidget.propTypes = {
     value: PropTypes.string,
-    ariaDescribedByFields: PropTypes.string
+    ariaDescribedBy: PropTypes.string
   };
 }
 

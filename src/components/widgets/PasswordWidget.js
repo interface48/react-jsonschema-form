@@ -1,7 +1,5 @@
 import React, {PropTypes} from "react";
-
 import BaseInput from "./EPBCBaseInput";
-
 
 function PasswordWidget(props) {
   return <BaseInput type="password" {...props}/>;
@@ -10,7 +8,7 @@ function PasswordWidget(props) {
 if (process.env.NODE_ENV !== "production") {
   PasswordWidget.propTypes = {
     value: PropTypes.string,
-    ariaDescribedByFields: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
   };
 }
 

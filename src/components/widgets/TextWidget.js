@@ -13,7 +13,7 @@ if (process.env.NODE_ENV !== "production") {
       React.PropTypes.number,
     ]),
     maxLength: PropTypes.number,
-    ariaDescribedByFields: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
   };
 }
 

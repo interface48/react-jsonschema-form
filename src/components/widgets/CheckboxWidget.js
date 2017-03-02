@@ -1,6 +1,5 @@
 import React, {PropTypes} from "react";
 
-
 function CheckboxWidget({
   schema,
   id,
@@ -8,7 +7,7 @@ function CheckboxWidget({
   disabled,
   label,
   autofocus,
-  ariaDescribedByFields,
+  ariaDescribedBy,
   onChange,
 }) {
   return (
@@ -20,7 +19,7 @@ function CheckboxWidget({
           disabled={disabled}
           autoFocus={autofocus}
           onChange={(event) => onChange(event.target.checked)}
-          aria-describedby={ariaDescribedByFields}/>
+          aria-describedby={ariaDescribedBy}/>
         <span>{label}</span>
       </label>
     </div>
@@ -38,7 +37,7 @@ if (process.env.NODE_ENV !== "production") {
     value: PropTypes.bool,
     required: PropTypes.bool,
     autofocus: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
     onChange: PropTypes.func
   };
 }

@@ -1,7 +1,5 @@
 import React, {PropTypes} from "react";
-
 import BaseInput from "./EPBCBaseInput";
-
 
 function DateWidget(props) {
   const {onChange} = props;
@@ -16,7 +14,7 @@ function DateWidget(props) {
 if (process.env.NODE_ENV !== "production") {
   DateWidget.propTypes = {
     value: PropTypes.string,
-    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string),
+    ariaDescribedBy: PropTypes.string,
   };
 }
 

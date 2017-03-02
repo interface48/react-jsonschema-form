@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from "react";
-
 import { shouldRender, parseDateString, toDateString, pad } from "../../utils";
 
 const NOT_SPECIFIED_DATE = "0000-01-01";
@@ -8,7 +7,7 @@ const DESCENDING = "desc";
 const MONTH_LABELS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 const DateElement = (props) => {
-  const {type, range, value, select, onBlur, rootId, disabled, readonly, autofocus, ariaDescribedByFields, registry, widgetOptions} = props;
+  const {type, range, value, select, onBlur, rootId, disabled, readonly, autofocus, ariaDescribedBy, registry, widgetOptions} = props;
   const id = rootId + "_" + type;
   const {SelectWidget} = registry.widgets;
   return (
@@ -21,7 +20,7 @@ const DateElement = (props) => {
       disabled={disabled}
       readonly={readonly}
       autofocus={autofocus}
-      ariaDescribedByFields={ariaDescribedByFields}
+      ariaDescribedBy={ariaDescribedBy}
       onBlur={(value) => onBlur(type, value)}
       onChange={(value) => select(type, value)} />
   );
@@ -198,7 +197,7 @@ class EPBCDateWidget extends Component {
   }
 
   render() {
-    const {id, disabled, readonly, autofocus, ariaDescribedByFields, registry, options} = this.props;
+    const {id, disabled, readonly, autofocus, ariaDescribedBy, registry, options} = this.props;
     return (
       <ul className="list-inline">{
         this.dateElementProps.map((elemProps, i) => (
@@ -212,7 +211,7 @@ class EPBCDateWidget extends Component {
               readonly={readonly}
               registry={registry}
               autofocus={autofocus && i === 0}
-              ariaDescribedByFields={ariaDescribedByFields}
+              ariaDescribedBy={ariaDescribedBy}
               widgetOptions={options} />
           </li>
         ))
@@ -239,7 +238,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
     options: PropTypes.shape({
       yearRange: PropTypes.shape(
         {

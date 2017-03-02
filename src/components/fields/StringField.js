@@ -20,7 +20,7 @@ function StringField(props) {
     disabled,
     readonly,
     autofocus,
-    ariaDescribedByFields,
+    ariaDescribedBy,
     registry,
     onChange
   } = props;
@@ -59,7 +59,7 @@ function StringField(props) {
     readonly={readonly}
     formContext={formContext}
     autofocus={autofocus}
-    ariaDescribedByFields={ariaDescribedByFields && ariaDescribedByFields.length ? ariaDescribedByFields.join(" ") : null}
+    ariaDescribedBy={ariaDescribedBy}
     registry={registry}
     placeholder={placeholder}/>;
 }
@@ -88,7 +88,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string)
+    ariaDescribedBy: PropTypes.string
   };
 }
 

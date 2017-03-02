@@ -153,20 +153,17 @@ function SchemaField(props) {
   const {__errors, ...fieldErrorSchema} = errorSchema;
   const errors = __errors;
   const help = uiSchema["ui:help"];
-
+  
+  // Build-out the aria-described-by attribute for accessibility, depending on whether or
+  // not errors and/or help is displayed
   let ariaDescribedByFields = [];
-
   if (errors && errors.length > 0) {
     ariaDescribedByFields.push(idSchema.$id + "-error");
   }
-
   if (help) {
     ariaDescribedByFields.push(idSchema.$id + "-help");
   }
-
-  if (ariaDescribedByFields.length < 0 ) {
-    ariaDescribedByFields = null;
-  }
+  const ariaDescribedBy = ariaDescribedByFields.length ? ariaDescribedByFields.join(" ") : null;
 
   if (Object.keys(schema).length === 0) {
     // See #312: Ensure compatibility with old versions of React.
@@ -200,9 +197,7 @@ function SchemaField(props) {
   else if (uiSchema["ui:hideLabel"]) {
     displayLabel = false;
     displayDescription = false;
-  }
-
-  
+  }  
 
   const field = (
     <FieldComponent {...props}
@@ -210,7 +205,7 @@ function SchemaField(props) {
       disabled={disabled}
       readonly={readonly}
       autofocus={autofocus}
-      ariaDescribedByFields={ariaDescribedByFields}
+      ariaDescribedBy={ariaDescribedBy}
       errorSchema={fieldErrorSchema}
       formContext={formContext} />
   );
@@ -231,8 +226,6 @@ function SchemaField(props) {
       description={description}
       formContext={formContext}
       isScrollable={uiSchema["ui:widget"] === "consent"} />;
-
-
 
   const fieldProps = {
     description: descriptionField,
@@ -288,7 +281,7 @@ if (process.env.NODE_ENV !== "production") {
     disabled: PropTypes.bool,
     readonly: PropTypes.bool,
     autofocus: PropTypes.bool,
-    ariaDescribedByFields: PropTypes.arrayOf(PropTypes.string)
+    ariaDescribedBy: PropTypes.string
   };
 }
 

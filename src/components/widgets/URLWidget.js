@@ -1,7 +1,5 @@
 import React, {PropTypes} from "react";
-
 import BaseInput from "./EPBCBaseInput";
-
 
 function URLWidget(props) {
   return <BaseInput type="url" {...props}/>;
@@ -10,7 +8,7 @@ function URLWidget(props) {
 if (process.env.NODE_ENV !== "production") {
   URLWidget.propTypes = {
     value: PropTypes.string,
-    ariaDescribedByFields: PropTypes.string,
+    ariaDescribedBy: PropTypes.string,
   };
 }
 
