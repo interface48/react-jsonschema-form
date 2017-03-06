@@ -53,7 +53,7 @@ function Help(props) {
   if (typeof help === "string") {
     return <div id={fieldId + "-help"} className="help-block">{renderHTML(help)}</div>;
   }
-  return <div className="help-block">{help}</div>;
+  return <div id={fieldId + "-help"} className="help-block">{help}</div>;
 }
 
 function ErrorList(props) {
