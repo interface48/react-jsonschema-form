@@ -34,6 +34,17 @@ module.exports = {
             format: "date"
           }
         }
+      },
+      monthYear: {
+        title: "Month Year Widget",
+        type: "object",
+        properties: {
+          "PrevAttendDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Most recent term  attended or applied for:"
+          }
+        }
       }
     }
   },
@@ -60,11 +71,42 @@ module.exports = {
       "alt-date": {
         "ui:widget": "alt-date"
       }
+    },
+    monthYear: {
+      "PrevAttendDate": {
+        "ui:widget": "monthyear",
+        "ui:options": {
+          "day": "31", // a static day
+          "month": {
+            "enum": [
+              "",
+              "1",
+              "5",
+              "9"
+            ],
+            "enumNames": [
+              "Select Term...",
+              "Spring (Jan - April)",
+              "Summer (May - Aug)",
+              "Fall (Sept - Dec)"
+            ]
+          },
+          "yearRange": {
+            "relativeStart": -100,
+            "relativeEnd": -10,
+            "sort": "DESC"
+          },
+        }
+      }
     }
+
   },
   formData: {
     native: {
       date: null
+    },
+    monthYear: {
+      "PrevAttendDate": null
     }
   }
 };
