@@ -1,22 +1,35 @@
 import React, { Component, PropTypes } from "react";
-import { shouldRender, parseDateString, toDateString, pad } from "../../utils";
+import { asNumber, shouldRender, parseDateString, toDateString, pad } from "../../utils";
 
 const NOT_SPECIFIED_DATE = "0000-01-01";
 const ASCENDING = "asc";
 const DESCENDING = "desc";
-const MONTH_LABELS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 const DateElement = (props) => {
   const {type, range, value, select, onBlur, rootId, disabled, readonly, autofocus, ariaDescribedBy, registry, widgetOptions} = props;
   const id = rootId + "_" + type;
   const {SelectWidget} = registry.widgets;
+
+  let options;
+
+  if (type === "year") {
+    options = { enumOptions: configureYearOptions(type, range[0], range[1], widgetOptions.yearRange.sort) };
+  }
+  else if (type === "month") {
+    let enumOptions = widgetOptions.month.enum.map((value, index) => {
+      return {value: value, label: widgetOptions.month.enumNames[index]};
+    });
+
+    options = { enumOptions };
+  }
+
   return (
     <SelectWidget
       schema={{ type: "integer" }}
       id={id}
       className="form-control"
-      options={{ enumOptions: configureDateOptions(type, range[0], range[1], widgetOptions.yearRange.sort) }}
-      value={value ? value : -1}
+      options={options}
+      value={value ? value : ""}
       disabled={disabled}
       readonly={readonly}
       autofocus={autofocus}
@@ -32,7 +45,7 @@ const isCompleteDate = (state) => {
   });
 }
 
-const configureDateOptions = (type, start, stop, orderYearBy) => {
+const configureYearOptions = (type, start, stop, orderYearBy) => {
   // Capitalize the first character of the date type (i.e. year, month, day, etc.)
   const typeLabel = type.toLowerCase().replace(/\b[a-z](?=[a-z]{2})/g, function (letter) {
     return letter.toUpperCase();
@@ -45,13 +58,6 @@ const configureDateOptions = (type, start, stop, orderYearBy) => {
       options.push({ value: i, label: pad(i, 2) });
     }
   }
-  // Otherwise, for all other year, month and day options, sort in ascending order...
-  else {
-    for (let i = start; i <= stop; i++) {
-      // If the type is month, use string labels instead of integers
-      options.push({ value: i, label: type === "month" ? MONTH_LABELS[i - 1] : pad(i, 2) });
-    }
-  }
   return options;
 }
 
@@ -59,7 +65,7 @@ const getDaysInMonth = (year, month) => {
   return new Date(year, month, 0).getDate();
 }
 
-class EPBCDateWidget extends Component {
+class MonthYearWidget extends Component {
   static defaultProps = {
     time: false,
     disabled: false,
@@ -90,10 +96,13 @@ class EPBCDateWidget extends Component {
   }
 
   onBlur = (property, event) => {
-    let nextState = Object.assign(this.state);
+    let nextState = Object.assign({}, this.state);
 
-    let value = parseInt(event.target.value);
-
+    // It could be the case that event.target.value is an empty string "".
+    // If that is the case, asNumber will convert it to 'undefined'.
+    let value = asNumber(event.target.value)
+    value = value ? value : -1;
+    
     nextState[property] = value === -1 ? null : value;
 
     this.setState(nextState, ()=> {
@@ -105,18 +114,22 @@ class EPBCDateWidget extends Component {
   };
 
   onChange = (property, value) => {
-    value = parseInt(value);
-    let nextState;
+    const {options} = this.props;
+
+    let nextState = Object.assign({}, this.state);
+
+    value = value ? value : -1;
     // If the year has changed, and month and day is set...
     if (property === "year" && this.state.month !== -1 && this.state.day !== -1) {
       let newYearValue = value;
       // Check if the currently set day is within the new year and month
       if (this.state.day <= getDaysInMonth(newYearValue, this.state.month)) {
-        nextState = { [property]: value };
+        nextState[property] = value;
       } 
       else {
         // Else, deselect the day
-        nextState = { [property]: value, day: -1 };
+        nextState[property] = value;
+        nextState.day = -1 ; 
       }
     } 
     // Otherwise, if the month has changed, and year and day is set...
@@ -124,17 +137,23 @@ class EPBCDateWidget extends Component {
       let newMonthValue = value
       // Check if the currently set day is within the year and new month
       if (this.state.day <= getDaysInMonth(this.state.year, newMonthValue)) {
-        nextState = { [property]: value };
+        nextState[property] = value;
       } 
       else {
         // Else, deselect the day
-        nextState = { [property]: value, day: -1 };
+        nextState[property] = value;
+        nextState.day = -1;
       }
     } 
     // Otherwise, the date must have changed - nothing special here...
     else {
-      nextState = { [property]: value };
+      nextState[property] = value;
     }
+
+    // Ensure that if the day specified in ui:options is not greater than the max number of days
+    // for the month and year specified.
+    let daysInMonth = getDaysInMonth(nextState.year, nextState.month);
+    nextState.day = asNumber(options.day) <= daysInMonth ? asNumber(options.day) : daysInMonth;
 
     this.setState(nextState, () => {
       // If we have a complete date (i.e. year, month, day specified), then propagate the
@@ -178,9 +197,8 @@ class EPBCDateWidget extends Component {
     const rangeEnd = currentYear + options.yearRange.relativeEnd;
 
     const data = [
-      { type: "year", range: [rangeStart, rangeEnd], value: year },
-      { type: "month", range: [1, 12], value: month },
-      { type: "day", range: [1, maxDays], value: day },
+      { type: "month", value: month },
+      { type: "year", range: [rangeStart, rangeEnd], value: year }
     ];
     if (time) {
       data.push(
@@ -226,7 +244,7 @@ class EPBCDateWidget extends Component {
 }
 
 if (process.env.NODE_ENV !== "production") {
-  EPBCDateWidget.propTypes = {
+  MonthYearWidget.propTypes = {
     schema: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,
     value: React.PropTypes.string,
@@ -236,6 +254,13 @@ if (process.env.NODE_ENV !== "production") {
     autofocus: PropTypes.bool,
     ariaDescribedBy: PropTypes.string,
     options: PropTypes.shape({
+      day: PropTypes.string,
+      month: PropTypes.shape(
+        {
+          enum: PropTypes.arrayOf(PropTypes.string),
+          enumNames: PropTypes.arrayOf(PropTypes.string)
+        }
+      ),
       yearRange: PropTypes.shape(
         {
           relativeStart: PropTypes.number,
@@ -251,4 +276,4 @@ if (process.env.NODE_ENV !== "production") {
   };
 }
 
-export default EPBCDateWidget;
+export default MonthYearWidget;
