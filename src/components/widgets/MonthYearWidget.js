@@ -67,7 +67,6 @@ const getDaysInMonth = (year, month) => {
 
 class MonthYearWidget extends Component {
   static defaultProps = {
-    time: false,
     disabled: false,
     readonly: false,
     autofocus: false,
@@ -88,7 +87,7 @@ class MonthYearWidget extends Component {
 
     // If this is the not specified date (0000-01-01), set it to the empty string so that parseDateString 
     // will set the date to an unset date state of { year: -1, month: -1, day: -1 }
-    this.state = parseDateString(props.value === NOT_SPECIFIED_DATE ? "" : props.value, props.time);
+    this.state = parseDateString(props.value === NOT_SPECIFIED_DATE ? "" : props.value, false);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -159,32 +158,32 @@ class MonthYearWidget extends Component {
       // If we have a complete date (i.e. year, month, day specified), then propagate the
       // value up to the parent form...
       if (isCompleteDate(this.state)) {
-        this.props.onChange(toDateString(this.state, this.props.time));
+        this.props.onChange(toDateString(this.state, false));
       }
     });
   };
 
   setNow = (event) => {
     event.preventDefault();
-    const {time, disabled, readonly, onChange} = this.props;
+    const {disabled, readonly, onChange} = this.props;
     if (disabled || readonly) {
       return;
     }
-    const nowDateObj = parseDateString(new Date().toJSON(), time);
-    this.setState(nowDateObj, () => onChange(toDateString(this.state, time)));
+    const nowDateObj = parseDateString(new Date().toJSON(), false);
+    this.setState(nowDateObj, () => onChange(toDateString(this.state, false)));
   };
 
   clear = (event) => {
     event.preventDefault();
-    const {time, disabled, readonly, onChange} = this.props;
+    const {disabled, readonly, onChange} = this.props;
     if (disabled || readonly) {
       return;
     }
-    this.setState(parseDateString("", time), () => onChange(null));
+    this.setState(parseDateString("", false), () => onChange(null));
   };
 
   get dateElementProps() {
-    const {time, options} = this.props;
+    const {options} = this.props;
     const {year, month, day, hour, minute, second} = this.state;
 
     // If the year and month are set, then calculate the max number of days,
@@ -200,13 +199,6 @@ class MonthYearWidget extends Component {
       { type: "month", value: month },
       { type: "year", range: [rangeStart, rangeEnd], value: year }
     ];
-    if (time) {
-      data.push(
-        { type: "hour", range: [0, 23], value: hour },
-        { type: "minutes", range: [0, 59], value: minute },
-        { type: "seconds", range: [0, 59], value: second }
-      );
-    }
     return data;
   }
 
@@ -272,7 +264,6 @@ if (process.env.NODE_ENV !== "production") {
       enableClear: PropTypes.bool,
     }),
     onChange: PropTypes.func,
-    time: PropTypes.bool,
   };
 }
 
