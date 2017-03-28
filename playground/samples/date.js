@@ -74,7 +74,7 @@ module.exports = {
     },
     monthYear: {
       "PrevAttendDate": {
-        "ui:widget": "monthyear",
+        "ui:widget": "ym-date",
         "ui:options": {
           "day": "31", // a static day
           "month": {

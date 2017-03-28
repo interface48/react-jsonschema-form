@@ -31,7 +31,7 @@ const widgetMap = {
     "date-time": "DateTimeWidget",
     "alt-date": "AltDateWidget",
     "alt-datetime": "AltDateTimeWidget",
-    "monthyear": "MonthYearWidget",
+    "ym-date": "MonthYearWidget",
     color: "ColorWidget",
     file: "FileWidget",
   },
